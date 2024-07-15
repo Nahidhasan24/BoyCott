@@ -36,6 +36,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.nahidsoft.boycott.Fragments.ListFragment;
 import com.nahidsoft.boycott.Fragments.ScanFragment;
 import com.nahidsoft.boycott.Models.BrandModel;
+import com.nahidsoft.boycott.Models.Category;
+import com.nahidsoft.boycott.Models.Country;
 import com.nahidsoft.boycott.Models.Product;
 import com.nahidsoft.boycott.Utilitis.APIs;
 import com.nahidsoft.boycott.databinding.ActivityMainBinding;
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         getBrands();
+        getCategory();
+        getCountry();
         if (isNetworkAvailable()) {
             getProducts();
         } else {
@@ -80,9 +84,103 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void getCountry(){
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, APIs.COUNTRY, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        List<Country> countries = new ArrayList<>();
+                        try {
+                            if (response.getString("status").equals("success")) {
+                                JSONObject data = response.getJSONObject("data");
+                                JSONArray countriesArray = data.getJSONArray("countries");
+
+                                for (int i = 0; i < countriesArray.length(); i++) {
+                                    JSONObject countryObj = countriesArray.getJSONObject(i);
+                                    String id = countryObj.getString("id");
+                                    String countryName = countryObj.getString("CountryName");
+                                    countries.add(new Country(id, countryName));
+                                }
+
+                                saveCountryListToPreferences(countries);
+                            } else {
+                            }
+                        } catch (JSONException e) {
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("auth-key", APIs.KEY);
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+    }
+    private void getCategory(){
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        List<Category> categoryList = new ArrayList<>();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                APIs.CATEGORY,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getString("status").equals("success")) {
+                                JSONArray categories = response.getJSONObject("data").getJSONArray("categories");
+
+                                for (int i = 0; i < categories.length(); i++) {
+                                    JSONObject category = categories.getJSONObject(i);
+                                    String id = category.getString("id");
+                                    String name = category.getString("name");
+                                    String categoryType = category.getString("category");
+
+                                    // Create Category object and add to list
+                                    Category categoryObj = new Category(id, name, categoryType);
+                                    categoryList.add(categoryObj);
+                                }
+                                saveCategoryListToPreferences(categoryList);
+                            } else {
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        Toast.makeText(MainActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("auth-key", APIs.KEY);
+                return headers;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+
+    }
     private void getBrands() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 APIs.BRAND,
@@ -134,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("auth-key", "9LgNbthL5xdgWgGAYmY9LtOCUgAgSYqsRQC1kItF4pbIzp2oiw");
+                params.put("auth-key", APIs.KEY);
                 return params;
             }
         };
@@ -220,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("auth-key", "9LgNbthL5xdgWgGAYmY9LtOCUgAgSYqsRQC1kItF4pbIzp2oiw");
+                params.put("auth-key", APIs.KEY);
                 return params;
             }
         };
@@ -252,6 +350,27 @@ public class MainActivity extends AppCompatActivity {
             listFragment.updateProductList(productList);
         }
     }
+
+    private void saveCountryListToPreferences(List<Country> countryList) {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        JSONArray jsonArray = new JSONArray();
+        for (Country country : countryList) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("id", country.getId());
+                jsonObject.put("countryName", country.getCountryName());
+                jsonArray.put(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        editor.putString("countryList", jsonArray.toString());
+        editor.apply();
+    }
+
 
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -303,4 +422,25 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
+    private void saveCategoryListToPreferences(List<Category> categoryList) {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        JSONArray jsonArray = new JSONArray();
+        for (Category category : categoryList) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("id", category.getId());
+                jsonObject.put("name", category.getName());
+                jsonObject.put("categoryType", category.getCategoryType());
+                jsonArray.put(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        editor.putString("categoryList", jsonArray.toString());
+        editor.apply();
+    }
+
 }

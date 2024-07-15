@@ -12,7 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/spinnerArrow"
         android:gravity="center"
-        android:textSize="15sp"
+        android:textSize="11sp"
         android:textColor="@android:color/white" />
 
     <ImageView

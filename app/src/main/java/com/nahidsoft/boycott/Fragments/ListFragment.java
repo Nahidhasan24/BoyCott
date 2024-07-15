@@ -17,10 +17,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nahidsoft.boycott.Adapters.ProducrsAdapter;
 import com.nahidsoft.boycott.CustomSpinnerAdapter;
 import com.nahidsoft.boycott.MainActivity;
 import com.nahidsoft.boycott.Models.BrandModel;
+import com.nahidsoft.boycott.Models.Category;
+import com.nahidsoft.boycott.Models.Country;
 import com.nahidsoft.boycott.Models.Product;
 import com.nahidsoft.boycott.R;
 import com.nahidsoft.boycott.databinding.FragmentListBinding;
@@ -29,9 +33,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ListFragment extends Fragment {
 
@@ -44,6 +52,8 @@ public class ListFragment extends Fragment {
     static final String BRAND_LIST_KEY = "brand_list";
     List<BrandModel> brandList;
     List<Product> productList;
+    List<Category> categoryLis;
+    private List<Country> countryNames;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,13 +67,17 @@ public class ListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         brandList = loadBrandListFromPreferences();
-
+        categoryLis = retrieveCategoriesFromSharedPreferences();
+        countryNames = loadCountryListFromPreferences();
         MainActivity mainActivity = (MainActivity) getActivity();
         binding.productArrayList.setHasFixedSize(true);
         binding.productArrayList.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         producrsAdapter = new ProducrsAdapter();
         binding.productArrayList.setAdapter(producrsAdapter);
+
         spinnerBrand(brandList);
+        spinnerCategory(categoryLis);
+        spinnerCountry(countryNames);
 
         if (mainActivity != null) {
             productList = mainActivity.getProductList();
@@ -82,6 +96,55 @@ public class ListFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void spinnerCountry(List<Country> countryNames) {
+        List<String> items = new ArrayList<>();
+        items.add("Location");
+
+        for (Country country : countryNames) {
+            items.add(country.getCountryName());
+        }
+
+        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
+        binding.spinnerLocation.setAdapter(adapter);
+        binding.spinnerLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    updateProductList(productList);
+                    matchedBrandProducts.clear();
+                } else {
+                    String selectedItem = items.get(position);
+                    for (Product product:productList){
+                        for (BrandModel bm : brandList) {
+                            if (product.getParentCompany().toLowerCase().equals(bm.getCompanyName().toLowerCase())){
+                                if (bm.getCountry().toLowerCase().equals(selectedItem.toLowerCase())){
+                                    matchedBrandProducts.add(product);
+                                    Toast.makeText(getActivity(), ""+product.getTitle(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    }
+
+                    if (matchedBrandProducts.size() == 0 | matchedBrandProducts.size() == -1) {
+                        binding.emptyTv.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.emptyTv.setVisibility(View.GONE);
+                    }
+
+                    producrsAdapter.setProductList(matchedBrandProducts);
+                    producrsAdapter.notifyDataSetChanged();
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
             }
         });
     }
@@ -116,6 +179,44 @@ public class ListFragment extends Fragment {
         return brandList;
     }
 
+    private List<Country> loadCountryListFromPreferences() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+        String jsonString = sharedPreferences.getString("countryList", null);
+        List<Country> countryList = new ArrayList<>();
+
+        if (jsonString != null) {
+            try {
+                JSONArray jsonArray = new JSONArray(jsonString);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String id = jsonObject.getString("id");
+                    String countryName = jsonObject.getString("countryName");
+
+                    Country country = new Country(id, countryName);
+                    countryList.add(country);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return countryList;
+    }
+
+    private List<Category> retrieveCategoriesFromSharedPreferences() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("categoryList", null);
+        Type type = new TypeToken<ArrayList<Category>>() {
+        }.getType();
+        List<Category> categoryList = gson.fromJson(json, type);
+        if (categoryList == null) {
+            categoryList = new ArrayList<>();
+        }
+        return categoryList;
+    }
+
+
     private void filter(String text) {
         List<Product> filteredList = new ArrayList<>();
         for (Product item : searchList) {
@@ -142,9 +243,7 @@ public class ListFragment extends Fragment {
         }
     }
 
-
     private void spinnerBrand(List<BrandModel> brandList) {
-
 
         List<String> items = new ArrayList<>();
         items.add("Brand");
@@ -161,9 +260,9 @@ public class ListFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
                     updateProductList(productList);
+                    matchedBrandProducts.clear();
                 } else {
                     String selectedItem = items.get(position);
-                    matchedBrandProducts.clear();
                     for (BrandModel bm : brandList) {
                         if (bm.getCompanyName().toLowerCase().equals(selectedItem.toLowerCase())) {
                             for (Product product : productList) {
@@ -177,6 +276,8 @@ public class ListFragment extends Fragment {
 
                     if (matchedBrandProducts.size() == 0 | matchedBrandProducts.size() == -1) {
                         binding.emptyTv.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.emptyTv.setVisibility(View.GONE);
                     }
 
                     producrsAdapter.setProductList(matchedBrandProducts);
@@ -190,5 +291,64 @@ public class ListFragment extends Fragment {
                 // Do nothing
             }
         });
+    }
+
+    private void spinnerCategory(List<Category> categoryList) {
+        List<String> items = new ArrayList<>();
+        items.add("Category");
+
+        for (Category category : categoryList) {
+            items.add(category.getName());
+        }
+
+        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
+        binding.spinnerCategory.setAdapter(adapter);
+        binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    updateProductList(productList);
+                    matchedBrandProducts.clear();
+                } else {
+                    String selectedItem = items.get(position);
+                    String selectedCategoryId = getIDByName(selectedItem);
+
+                    matchedBrandProducts.clear();
+
+                    for (Product product : productList) {
+                        Set<String> productCategoryIds = new HashSet<>(Arrays.asList(product.getCategory().split(",")));
+                        if (productCategoryIds.contains(selectedCategoryId)) {
+                            matchedBrandProducts.add(product);
+                        }
+                    }
+
+                    if (matchedBrandProducts.isEmpty()) {
+                        binding.emptyTv.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.emptyTv.setVisibility(View.GONE);
+                    }
+
+                    producrsAdapter.setProductList(matchedBrandProducts);
+                    producrsAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+    }
+
+
+    private String getIDByName(String name) {
+        String id = "";
+        for (Category category : categoryLis) {
+            if (category.getName().toLowerCase().equals(name.toLowerCase())) {
+                id = category.getId();
+            }
+        }
+        return id;
     }
 }
