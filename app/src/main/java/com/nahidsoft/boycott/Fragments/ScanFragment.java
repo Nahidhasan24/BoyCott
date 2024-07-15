@@ -84,6 +84,7 @@ public class ScanFragment extends Fragment {
 
     @OptIn(markerClass = ExperimentalGetImage.class)
     private void analyzeImage(ImageProxy imageProxy) {
+        String res;
         ImageProxy.PlaneProxy[] planes = imageProxy.getPlanes();
         if (planes.length > 0) {
             InputImage image = InputImage.fromMediaImage(imageProxy.getImage(), imageProxy.getImageInfo().getRotationDegrees());

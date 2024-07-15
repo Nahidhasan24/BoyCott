@@ -39,10 +39,11 @@ public class ListFragment extends Fragment {
     ProducrsAdapter producrsAdapter;
     List<Product> searchList = new ArrayList<>();
     List<Product> mainList = new ArrayList<>();
-
-    private static final String PREFS_NAME = "MyPrefs";
-    private static final String BRAND_LIST_KEY = "brand_list";
-    private List<BrandModel> brandList;
+    List<Product> matchedBrandProducts = new ArrayList<>();
+    static final String PREFS_NAME = "MyPrefs";
+    static final String BRAND_LIST_KEY = "brand_list";
+    List<BrandModel> brandList;
+    List<Product> productList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,7 +66,7 @@ public class ListFragment extends Fragment {
         spinnerBrand(brandList);
 
         if (mainActivity != null) {
-            List<Product> productList = mainActivity.getProductList();
+            productList = mainActivity.getProductList();
             updateProductList(productList);
         }
 
@@ -131,18 +132,27 @@ public class ListFragment extends Fragment {
             binding.productCountTv.setText("Shows " + productList.size() + " Products");
             searchList.clear();
             searchList.addAll(productList);
+            if (productList.isEmpty()) {
+                binding.emptyTv.setVisibility(View.VISIBLE);
+            } else {
+                binding.emptyTv.setVisibility(View.GONE);
+            }
             producrsAdapter.setProductList(productList);
             producrsAdapter.notifyDataSetChanged();
         }
     }
 
-    private void spinnerBrand(List<BrandModel> list) {
+
+    private void spinnerBrand(List<BrandModel> brandList) {
+
 
         List<String> items = new ArrayList<>();
+        items.add("Brand");
 
-        for (int i = 0; i < list.size(); i++) {
-            items.add(list.get(i).getTitle());
+        for (BrandModel brand : brandList) {
+            items.add(brand.getCompanyName());
         }
+
         CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
         binding.spinnerBrand.setAdapter(adapter);
@@ -150,11 +160,28 @@ public class ListFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-                    // Placeholder selected
+                    updateProductList(productList);
                 } else {
-                    // Handle the actual selection
                     String selectedItem = items.get(position);
-                    Toast.makeText(getActivity(), "Selected: " + selectedItem, Toast.LENGTH_SHORT).show();
+                    matchedBrandProducts.clear();
+                    for (BrandModel bm : brandList) {
+                        if (bm.getCompanyName().toLowerCase().equals(selectedItem.toLowerCase())) {
+                            for (Product product : productList) {
+                                if (product.getParentCompany().equals(bm.getCompanyName())) {
+                                    matchedBrandProducts.add(product);
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+                    if (matchedBrandProducts.size() == 0 | matchedBrandProducts.size() == -1) {
+                        binding.emptyTv.setVisibility(View.VISIBLE);
+                    }
+
+                    producrsAdapter.setProductList(matchedBrandProducts);
+                    producrsAdapter.notifyDataSetChanged();
+
                 }
             }
 

@@ -16,10 +16,11 @@ import com.bumptech.glide.Glide;
 import com.nahidsoft.boycott.Models.Product;
 import com.nahidsoft.boycott.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProducrsAdapter extends RecyclerView.Adapter<ProducrsAdapter.viewholder> {
-    private List<Product> productList;
+    private List<Product> productList = new ArrayList<>();
 
     @NonNull
     @Override
@@ -67,3 +68,4 @@ public class ProducrsAdapter extends RecyclerView.Adapter<ProducrsAdapter.viewho
         }
     }
 }
+

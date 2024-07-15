@@ -21,6 +21,7 @@ public class CustomSpinnerAdapter extends ArrayAdapter<String> {
         this.items = items;
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         return createItemView(position, convertView, parent, R.layout.spinner_item_with_arrow);
@@ -38,4 +39,5 @@ public class CustomSpinnerAdapter extends ArrayAdapter<String> {
         checkedTextView.setText(items.get(position));
         return view;
     }
+
 }
