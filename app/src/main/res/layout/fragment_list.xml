@@ -20,17 +20,21 @@
             android:padding="20dp"
             android:weightSum="10">
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/searchET"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="7"
                 android:background="@drawable/search_bg"
                 android:drawableStart="@drawable/baseline_search_24"
+                android:drawableEnd="@drawable/baseline_close_24"
                 android:drawablePadding="10dp"
                 android:hint="Search..."
                 android:paddingLeft="15dp"
-                android:textColor="@color/black" />
+                android:paddingRight="10dp"
+                android:textColor="@color/black"
+                android:textSize="11sp" /> <!-- Smaller text for autocomplete -->
+
 
             <LinearLayout
                 android:id="@+id/filterBtn"
@@ -107,32 +111,30 @@
         android:id="@+id/productCountTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Shows 1023 Products"
         android:layout_below="@id/top_section"
-        android:textSize="16sp"
-        android:gravity="center"
         android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="Shows 1023 Products"
         android:textColor="@color/red"
-        />
+        android:textSize="16sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
         android:id="@+id/productArrayList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/productCountTv">
+        android:layout_below="@id/productCountTv"
+        android:layout_marginTop="10dp">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
         android:id="@+id/emptyTv"
-        android:textSize="20sp"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Empty List"
         android:layout_centerInParent="true"
-        />
+        android:text="Empty List"
+        android:textSize="20sp"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

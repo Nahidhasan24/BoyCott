@@ -2,19 +2,24 @@ package com.nahidsoft.boycott.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -35,11 +40,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ListFragment extends Fragment {
 
@@ -75,32 +76,62 @@ public class ListFragment extends Fragment {
         producrsAdapter = new ProducrsAdapter();
         binding.productArrayList.setAdapter(producrsAdapter);
 
-        spinnerBrand(brandList);
-        spinnerCategory(categoryLis);
-        spinnerCountry(countryNames);
+        setupSpinners();
 
         if (mainActivity != null) {
             productList = mainActivity.getProductList();
             updateProductList(productList);
         }
 
-        binding.searchET.addTextChangedListener(new TextWatcher() {
+        setupSearchAutoComplete();
+    }
+
+    private void setupSpinners() {
+        setupSpinnerCountry(countryNames);
+        setupSpinnerBrand(brandList);
+        setupSpinnerCategory(categoryLis);
+
+        binding.spinnerBrand.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                checkAndFilterProducts();
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filter(s.toString());
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+
+        binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                checkAndFilterProducts();
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+
+        binding.spinnerLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                checkAndFilterProducts();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
             }
         });
     }
 
-    private void spinnerCountry(List<Country> countryNames) {
+    private void setupSpinnerCountry(List<Country> countryNames) {
         List<String> items = new ArrayList<>();
         items.add("Location");
 
@@ -111,42 +142,69 @@ public class ListFragment extends Fragment {
         CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
         binding.spinnerLocation.setAdapter(adapter);
-        binding.spinnerLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    updateProductList(productList);
-                    matchedBrandProducts.clear();
-                } else {
-                    String selectedItem = items.get(position);
-                    for (Product product:productList){
-                        for (BrandModel bm : brandList) {
-                            if (product.getParentCompany().toLowerCase().equals(bm.getCompanyName().toLowerCase())){
-                                if (bm.getCountry().toLowerCase().equals(selectedItem.toLowerCase())){
-                                    matchedBrandProducts.add(product);
-                                    Toast.makeText(getActivity(), ""+product.getTitle(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-                    }
+    }
 
-                    if (matchedBrandProducts.size() == 0 | matchedBrandProducts.size() == -1) {
-                        binding.emptyTv.setVisibility(View.VISIBLE);
-                    } else {
-                        binding.emptyTv.setVisibility(View.GONE);
-                    }
+    private void setupSpinnerBrand(List<BrandModel> brandList) {
+        List<String> items = new ArrayList<>();
+        items.add("Brand");
 
-                    producrsAdapter.setProductList(matchedBrandProducts);
-                    producrsAdapter.notifyDataSetChanged();
+        for (BrandModel brand : brandList) {
+            items.add(brand.getCompanyName());
+        }
 
+        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
+        binding.spinnerBrand.setAdapter(adapter);
+    }
+
+    private void setupSpinnerCategory(List<Category> categoryList) {
+        List<String> items = new ArrayList<>();
+        items.add("Category");
+
+        for (Category category : categoryList) {
+            items.add(category.getName());
+        }
+
+        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
+        binding.spinnerCategory.setAdapter(adapter);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void checkAndFilterProducts() {
+        String selectedBrand = binding.spinnerBrand.getSelectedItem().toString();
+        String selectedCategory = binding.spinnerCategory.getSelectedItem().toString();
+        String selectedLocation = binding.spinnerLocation.getSelectedItem().toString();
+
+        if ("Brand".equals(selectedBrand) && "Category".equals(selectedCategory) && "Location".equals(selectedLocation)) {
+            updateProductList(productList);
+        } else {
+            matchedBrandProducts.clear();
+            for (Product product : productList) {
+                boolean matchesBrand = "Brand".equals(selectedBrand) || product.getParentCompany().equalsIgnoreCase(selectedBrand);
+                boolean matchesCategory = "Category".equals(selectedCategory) || product.getCategory().contains(getIDByName(selectedCategory));
+                boolean matchesLocation = "Location".equals(selectedLocation) || brandList.stream().anyMatch(bm -> bm.getCompanyName().equalsIgnoreCase(product.getParentCompany()) && bm.getCountry().equalsIgnoreCase(selectedLocation));
+
+                if (matchesBrand && matchesCategory && matchesLocation) {
+                    matchedBrandProducts.add(product);
                 }
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
+            updateMessage(matchedBrandProducts.size());
+
+            producrsAdapter.setProductList(matchedBrandProducts);
+            producrsAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void updateMessage(int size) {
+        if (size == 0) {
+            binding.emptyTv.setVisibility(View.VISIBLE);
+            binding.productCountTv.setText("No products found");
+        } else {
+            binding.emptyTv.setVisibility(View.GONE);
+            binding.productCountTv.setText("Shows " + size + " Products");
+        }
     }
 
     private List<BrandModel> loadBrandListFromPreferences() {
@@ -216,6 +274,52 @@ public class ListFragment extends Fragment {
         return categoryList;
     }
 
+    private void setupSearchAutoComplete() {
+        List<String> productTitles = new ArrayList<>();
+        for (Product product : searchList) {
+            productTitles.add(product.getTitle());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_dropdown_item_custom, productTitles);
+        binding.searchET.setAdapter(adapter);
+        binding.searchET.setThreshold(1); // Start suggesting from the first character
+
+        binding.searchET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        binding.searchET.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = (String) parent.getItemAtPosition(position);
+                filter(selectedItem);
+            }
+        });
+
+        // Clear text button functionality
+        binding.searchET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getRawX() >= (binding.searchET.getRight() - binding.searchET.getCompoundDrawables()[2].getBounds().width())) {
+                        binding.searchET.setText("");
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
 
     private void filter(String text) {
         List<Product> filteredList = new ArrayList<>();
@@ -224,131 +328,34 @@ public class ListFragment extends Fragment {
                 filteredList.add(item);
             }
         }
+        updateMessage(filteredList.size());
         producrsAdapter.setProductList(filteredList);
         producrsAdapter.notifyDataSetChanged();
     }
 
     public void updateProductList(List<Product> productList) {
         if (producrsAdapter != null) {
-            binding.productCountTv.setText("Shows " + productList.size() + " Products");
             searchList.clear();
             searchList.addAll(productList);
-            if (productList.isEmpty()) {
-                binding.emptyTv.setVisibility(View.VISIBLE);
-            } else {
-                binding.emptyTv.setVisibility(View.GONE);
-            }
+            updateMessage(productList.size());
             producrsAdapter.setProductList(productList);
             producrsAdapter.notifyDataSetChanged();
+
+            List<String> productTitles = new ArrayList<>();
+            for (Product product : searchList) {
+                productTitles.add(product.getTitle());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_dropdown_item_custom, productTitles);
+            binding.searchET.setAdapter(adapter);
         }
     }
-
-    private void spinnerBrand(List<BrandModel> brandList) {
-
-        List<String> items = new ArrayList<>();
-        items.add("Brand");
-
-        for (BrandModel brand : brandList) {
-            items.add(brand.getCompanyName());
-        }
-
-        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
-        binding.spinnerBrand.setAdapter(adapter);
-        binding.spinnerBrand.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    updateProductList(productList);
-                    matchedBrandProducts.clear();
-                } else {
-                    String selectedItem = items.get(position);
-                    for (BrandModel bm : brandList) {
-                        if (bm.getCompanyName().toLowerCase().equals(selectedItem.toLowerCase())) {
-                            for (Product product : productList) {
-                                if (product.getParentCompany().equals(bm.getCompanyName())) {
-                                    matchedBrandProducts.add(product);
-                                }
-                            }
-                            break;
-                        }
-                    }
-
-                    if (matchedBrandProducts.size() == 0 | matchedBrandProducts.size() == -1) {
-                        binding.emptyTv.setVisibility(View.VISIBLE);
-                    } else {
-                        binding.emptyTv.setVisibility(View.GONE);
-                    }
-
-                    producrsAdapter.setProductList(matchedBrandProducts);
-                    producrsAdapter.notifyDataSetChanged();
-
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
-    }
-
-    private void spinnerCategory(List<Category> categoryList) {
-        List<String> items = new ArrayList<>();
-        items.add("Category");
-
-        for (Category category : categoryList) {
-            items.add(category.getName());
-        }
-
-        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
-        binding.spinnerCategory.setAdapter(adapter);
-        binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    updateProductList(productList);
-                    matchedBrandProducts.clear();
-                } else {
-                    String selectedItem = items.get(position);
-                    String selectedCategoryId = getIDByName(selectedItem);
-
-                    matchedBrandProducts.clear();
-
-                    for (Product product : productList) {
-                        Set<String> productCategoryIds = new HashSet<>(Arrays.asList(product.getCategory().split(",")));
-                        if (productCategoryIds.contains(selectedCategoryId)) {
-                            matchedBrandProducts.add(product);
-                        }
-                    }
-
-                    if (matchedBrandProducts.isEmpty()) {
-                        binding.emptyTv.setVisibility(View.VISIBLE);
-                    } else {
-                        binding.emptyTv.setVisibility(View.GONE);
-                    }
-
-                    producrsAdapter.setProductList(matchedBrandProducts);
-                    producrsAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
-    }
-
 
     private String getIDByName(String name) {
-        String id = "";
         for (Category category : categoryLis) {
-            if (category.getName().toLowerCase().equals(name.toLowerCase())) {
-                id = category.getId();
+            if (category.getName().equalsIgnoreCase(name)) {
+                return category.getId();
             }
         }
-        return id;
+        return "";
     }
 }
