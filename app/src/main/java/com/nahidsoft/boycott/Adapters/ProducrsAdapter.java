@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.nahidsoft.boycott.Models.ProductsModel;
+import com.nahidsoft.boycott.Models.Product;
 import com.nahidsoft.boycott.R;
 
 import java.util.List;
@@ -19,40 +19,40 @@ import java.util.List;
 public class ProducrsAdapter extends RecyclerView.Adapter<ProducrsAdapter.viewholder> {
 
 
-    private Context context;
-    private List<ProductsModel> productsModelList;
-
-    public ProducrsAdapter(Context context, List<ProductsModel> productsModelList) {
-        this.context = context;
-        this.productsModelList = productsModelList;
-    }
+    private List<Product> productList;
 
     @NonNull
     @Override
     public viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.products_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.products_item, parent, false);
         return new viewholder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
-        ProductsModel productsModel=productsModelList.get(position);
-        Glide.with(context).load(productsModel.getImage()).into(holder.imageView);
-        holder.textView.setText(""+productsModel.getTitle());
+        Product product = productList.get(position);
+        Glide.with(holder.itemView.getContext()).load(product.getImage()).into(holder.imageView);
+        holder.textView.setText("" + product.getTitle());
     }
 
     @Override
     public int getItemCount() {
-        return productsModelList.size();
+        return productList.size();
+    }
+
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
+        notifyDataSetChanged();
     }
 
     class viewholder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textView;
+
         public viewholder(@NonNull View itemView) {
             super(itemView);
-            imageView=itemView.findViewById(R.id.productImage);
-            textView=itemView.findViewById(R.id.productTitle);
+            imageView = itemView.findViewById(R.id.productImage);
+            textView = itemView.findViewById(R.id.productTitle);
         }
     }
 }

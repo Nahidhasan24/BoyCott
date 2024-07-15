@@ -1,4 +1,4 @@
-package com.nahidsoft.boycott;
+package com.nahidsoft.boycott.Fragments;
 
 import android.os.Bundle;
 
@@ -14,7 +14,10 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.nahidsoft.boycott.Adapters.ProducrsAdapter;
-import com.nahidsoft.boycott.Models.ProductsModel;
+import com.nahidsoft.boycott.CustomSpinnerAdapter;
+import com.nahidsoft.boycott.MainActivity;
+import com.nahidsoft.boycott.Models.Product;
+import com.nahidsoft.boycott.R;
 import com.nahidsoft.boycott.databinding.FragmentListBinding;
 
 import java.util.ArrayList;
@@ -24,7 +27,6 @@ public class ListFragment extends Fragment {
 
     FragmentListBinding binding;
     ProducrsAdapter producrsAdapter;
-    ArrayList<ProductsModel> productsModelArrayList=new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -32,43 +34,28 @@ public class ListFragment extends Fragment {
         binding = FragmentListBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadData();
+        MainActivity mainActivity = (MainActivity) getActivity();
 
         binding.productArrayList.setHasFixedSize(true);
         binding.productArrayList.setLayoutManager(new GridLayoutManager(getActivity(),3));
-        producrsAdapter=new ProducrsAdapter(getActivity(),productsModelArrayList);
+        producrsAdapter=new ProducrsAdapter();
         binding.productArrayList.setAdapter(producrsAdapter);
-        binding.productCountTv.setText("Shows "+productsModelArrayList.size()+" Products");
+        if (mainActivity != null) {
+            List<Product> productList = mainActivity.getProductList();
+            binding.productCountTv.setText("Shows "+ productList.size()+" Products");
+            updateProductList(productList);
+        }
 
-
-        spinnerOne();
-        spinnerTwo();
-        spinnerThree();
     }
 
-    private void loadData() {
-        productsModelArrayList.add(new ProductsModel("Pepsi 1","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 2","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 3","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 4","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 5","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 6","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 7","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 8","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 9","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 10","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 11","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 12","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
-        productsModelArrayList.add(new ProductsModel("Pepsi 13","https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Pepsi_2023.svg/140px-Pepsi_2023.svg.png"));
 
-        productsModelArrayList.add(new ProductsModel("Coca-Cola 1","https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Coca-Cola_logo.svg/512px-Coca-Cola_logo.svg.png?20231211133000"));
-        productsModelArrayList.add(new ProductsModel("Coca-Cola 2","https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Coca-Cola_logo.svg/512px-Coca-Cola_logo.svg.png?20231211133000"));
-        productsModelArrayList.add(new ProductsModel("Coca-Cola 3","https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Coca-Cola_logo.svg/512px-Coca-Cola_logo.svg.png?20231211133000"));
-
+    public void updateProductList(List<Product> productList) {
+        if (producrsAdapter != null) {
+            producrsAdapter.setProductList(productList);
+        }
     }
 
     private void spinnerThree() {
@@ -133,15 +120,7 @@ public class ListFragment extends Fragment {
         });
     }
 
-    private void spinnerOne() {
-        List<String> items = new ArrayList<>();
-        items.add("Brand");
-        items.add("Nike");
-        items.add("Patagonia");
-        items.add("Virgin");
-        items.add("Monocle");
-
-
+    private void spinnerBrand(List<String> items ) {
         CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
         binding.spinnerBrand.setAdapter(adapter);

@@ -1,6 +1,5 @@
-package com.nahidsoft.boycott;
+package com.nahidsoft.boycott.Fragments;
 
-import android.Manifest;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Size;
@@ -25,19 +24,12 @@ import androidx.fragment.app.Fragment;
 import com.google.common.util.concurrent.ListenableFuture;
 
 
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import com.nahidsoft.boycott.databinding.FragmentScanBinding;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ScanFragment extends Fragment {
