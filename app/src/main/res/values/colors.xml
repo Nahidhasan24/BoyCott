@@ -6,4 +6,6 @@
     <color name="nav_item_color">#4a6afb</color>
     <color name="secondColor">#627dfc</color>
     <color name="red">#FF0000</color>
+    <color name="green">#13B600</color>
+    <color name="yellow">#CDDC39</color>
 </resources>
