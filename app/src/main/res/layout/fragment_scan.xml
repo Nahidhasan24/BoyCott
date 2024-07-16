@@ -3,9 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.journeyapps.barcodescanner.DecoratedBarcodeView
-        android:id="@+id/barcode_scanner"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <include layout="@layout/custom_barcode_scanner"/>
 
 </RelativeLayout>
