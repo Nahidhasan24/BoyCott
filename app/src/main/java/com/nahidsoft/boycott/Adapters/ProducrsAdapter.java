@@ -43,8 +43,14 @@ public class ProducrsAdapter extends RecyclerView.Adapter<ProducrsAdapter.viewho
         } else if (product.getStatus().equals("yellow")) {
             holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.yellow_bg));
         }
-        Glide.with(holder.itemView.getContext()).load(APIs.IMAGE+product.getImage()).into(holder.imageView);
-        holder.textView.setText("" + product.getTitle());
+        if (product.getImage().contains("https")){
+            Glide.with(holder.itemView.getContext()).load(product.getImage()).into(holder.imageView);
+            holder.textView.setText("" + product.getTitle());
+        }else{
+            Glide.with(holder.itemView.getContext()).load(APIs.IMAGE+product.getImage()).into(holder.imageView);
+            holder.textView.setText("" + product.getTitle());
+        }
+
     }
 
     @Override

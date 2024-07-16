@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getCountry(){
+    private void getCountry() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, APIs.COUNTRY, null,
@@ -105,16 +105,16 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                                 saveCountryListToPreferences(countries);
-                            } else {
                             }
                         } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override
@@ -127,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
 
         queue.add(jsonObjectRequest);
     }
-    private void getCategory(){
+
+    private void getCategory() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         List<Category> categoryList = new ArrayList<>();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -152,8 +153,6 @@ public class MainActivity extends AppCompatActivity {
                                     categoryList.add(categoryObj);
                                 }
                                 saveCategoryListToPreferences(categoryList);
-                            } else {
-
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -164,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        Toast.makeText(MainActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
         ) {
@@ -177,8 +176,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         requestQueue.add(jsonObjectRequest);
-
     }
+
     private void getBrands() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -191,9 +190,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "Response: " + response.toString());
                         try {
                             String status = response.getString("status");
-                            String message = response.getString("message");
-                            JSONObject data = response.getJSONObject("data");
-                            if (status.equals("success")){
+                            if (status.equals("success")) {
+                                JSONObject data = response.getJSONObject("data");
                                 JSONArray products = data.getJSONArray("products");
                                 for (int i = 0; i < products.length(); i++) {
                                     JSONObject product = products.getJSONObject(i);
@@ -213,8 +211,8 @@ public class MainActivity extends AppCompatActivity {
                                     brandList.add(brand);
                                 }
                                 saveBrandListToPreferences(brandList);
-                            }else{
-                                Toast.makeText(MainActivity.this, ""+status, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "" + status, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -225,10 +223,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Error: " + error.toString());
-                        Toast.makeText(MainActivity.this, "Error "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Error " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-        ){
+        ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
@@ -239,29 +237,12 @@ public class MainActivity extends AppCompatActivity {
 
         requestQueue.add(jsonObjectRequest);
     }
+
     private void saveBrandListToPreferences(List<BrandModel> brandList) {
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        JSONArray jsonArray = new JSONArray();
-        for (BrandModel brand : brandList) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("id", brand.getId());
-                jsonObject.put("title", brand.getTitle());
-                jsonObject.put("createdTime", brand.getCreatedTime());
-                jsonObject.put("companyName", brand.getCompanyName());
-                jsonObject.put("image", brand.getImage());
-                jsonObject.put("country", brand.getCountry());
-                jsonObject.put("owner", brand.getOwner());
-                jsonObject.put("status", brand.getStatus());
-                jsonArray.put(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        editor.putString(BRAND_LIST_KEY, jsonArray.toString());
+        Gson gson = new Gson();
+        String json = gson.toJson(brandList);
+        editor.putString(BRAND_LIST_KEY, json);
         editor.apply();
     }
 
@@ -337,7 +318,8 @@ public class MainActivity extends AppCompatActivity {
     private void loadProductListFromPreferences() {
         Gson gson = new Gson();
         String json = sharedPreferences.getString(PRODUCT_LIST_KEY, null);
-        Type type = new TypeToken<List<Product>>() {}.getType();
+        Type type = new TypeToken<List<Product>>() {
+        }.getType();
         productList = gson.fromJson(json, type);
 
         if (productList == null) {
@@ -371,6 +353,26 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    private void saveCategoryListToPreferences(List<Category> categoryList) {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        JSONArray jsonArray = new JSONArray();
+        for (Category category : categoryList) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("id", category.getId());
+                jsonObject.put("name", category.getName());
+                jsonObject.put("categoryType", category.getCategoryType());
+                jsonArray.put(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        editor.putString("categoryList", jsonArray.toString());
+        editor.apply();
+    }
 
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -422,25 +424,4 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
-    private void saveCategoryListToPreferences(List<Category> categoryList) {
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        JSONArray jsonArray = new JSONArray();
-        for (Category category : categoryList) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("id", category.getId());
-                jsonObject.put("name", category.getName());
-                jsonObject.put("categoryType", category.getCategoryType());
-                jsonArray.put(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        editor.putString("categoryList", jsonArray.toString());
-        editor.apply();
-    }
-
 }
