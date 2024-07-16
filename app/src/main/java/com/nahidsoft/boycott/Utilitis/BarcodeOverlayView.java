@@ -1,4 +1,4 @@
-package com.nahidsoft.boycott;
+package com.nahidsoft.boycott.Utilitis;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.nahidsoft.boycott.R;
 
 public class BarcodeOverlayView extends View {
     private Paint framePaint;

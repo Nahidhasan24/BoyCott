@@ -24,14 +24,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nahidsoft.boycott.Adapters.ProducrsAdapter;
-import com.nahidsoft.boycott.CustomSpinnerAdapter;
+import com.nahidsoft.boycott.Utilitis.CustomSpinnerAdapter;
 import com.nahidsoft.boycott.MainActivity;
 import com.nahidsoft.boycott.Models.BrandModel;
 import com.nahidsoft.boycott.Models.Category;

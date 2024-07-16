@@ -1,8 +1,6 @@
 package com.nahidsoft.boycott.Fragments;
 
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,32 +8,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.OptIn;
-import androidx.camera.core.Camera;
-import androidx.camera.core.CameraSelector;
-import androidx.camera.core.ExperimentalGetImage;
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageProxy;
-import androidx.camera.core.Preview;
-import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
-
-import com.google.mlkit.vision.barcode.BarcodeScanning;
-import com.google.mlkit.vision.barcode.common.Barcode;
-import com.google.mlkit.vision.common.InputImage;
-
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
 import com.nahidsoft.boycott.databinding.FragmentScanBinding;
-
-import java.util.concurrent.ExecutionException;
 
 public class ScanFragment extends Fragment {
 
-    private FragmentScanBinding binding;
-    private ProcessCameraProvider cameraProvider;
+    FragmentScanBinding binding;
+    private boolean hasScanned = false;
 
     @Nullable
     @Override
@@ -47,74 +29,38 @@ public class ScanFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        startCamera();
+        startScan();
     }
 
-
-
-    private void startCamera() {
-        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext());
-        cameraProviderFuture.addListener(() -> {
-            try {
-                cameraProvider = cameraProviderFuture.get();
-                bindPreview(cameraProvider);
-            } catch (ExecutionException | InterruptedException e) {
-                // Handle errors
+    private void startScan() {
+        binding.barcodeScanner.decodeContinuous(new BarcodeCallback() {
+            @Override
+            public void barcodeResult(BarcodeResult result) {
+                if (result.getText() != null && !hasScanned) {
+                    hasScanned = true;
+                    checkTheResult(result.getText());
+                }
             }
-        }, ContextCompat.getMainExecutor(requireContext()));
+        });
     }
 
-    private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
-        Preview preview = new Preview.Builder().build();
-        CameraSelector cameraSelector = new CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                .build();
-
-        ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .setTargetResolution(new Size(binding.previewView.getWidth(), binding.previewView.getHeight()))
-                .build();
-
-        imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(requireContext()), this::analyzeImage);
-
-        preview.setSurfaceProvider(binding.previewView.getSurfaceProvider());
-
-        Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
-    }
-
-    @OptIn(markerClass = ExperimentalGetImage.class)
-    private void analyzeImage(ImageProxy imageProxy) {
-        String res;
-        ImageProxy.PlaneProxy[] planes = imageProxy.getPlanes();
-        if (planes.length > 0) {
-            InputImage image = InputImage.fromMediaImage(imageProxy.getImage(), imageProxy.getImageInfo().getRotationDegrees());
-            BarcodeScanning.getClient().process(image)
-                    .addOnSuccessListener(barcodes -> {
-                        for (Barcode barcode : barcodes) {
-                            Rect frameRect = binding.barcodeOverlay.getFrameRect();
-                            if (frameRect != null && isWithinFrame(barcode.getBoundingBox(), frameRect)) {
-                                result(barcode.getRawValue());
-                                break;
-                            }
-                        }
-                    })
-                    .addOnCompleteListener(task -> imageProxy.close());
-        } else {
-            imageProxy.close();
-        }
-    }
-
-    private boolean isWithinFrame(Rect barcodeRect, Rect frame) {
-        return frame.contains(barcodeRect);
-    }
-
-    private void result(String result) {
-        Toast.makeText(requireContext(), result, Toast.LENGTH_SHORT).show();
+    private void checkTheResult(String text) {
+        Toast.makeText(getActivity(), ""+text, Toast.LENGTH_SHORT).show();
+        hasScanned = false;
+        startScan();
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onResume() {
+        super.onResume();
+        hasScanned = false;  // Reset the flag when resuming the fragment
+        binding.barcodeScanner.resume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        binding.barcodeScanner.pause();
     }
 }
+
