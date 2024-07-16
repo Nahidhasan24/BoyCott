@@ -8,5 +8,6 @@ public class APIs {
     public static final String BRAND=BASE_URL+"getallbrands.php";
     public static final String CATEGORY=BASE_URL+"getallcategroys.php";
     public static final String COUNTRY=BASE_URL+"getcountry.php";
+    public static final String CHECK=BASE_URL+"check.php";
     public static final String KEY="9LgNbthL5xdgWgGAYmY9LtOCUgAgSYqsRQC1kItF4pbIzp2oiw";
 }
