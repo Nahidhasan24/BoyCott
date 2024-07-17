@@ -4,4 +4,13 @@
         <!-- Customize your dark theme here. -->
         <item name="colorPrimary">@color/primary</item>
     </style>
+    <style name="Theme.BoyCott" parent="Base.Theme.BoyCott" />
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+    <style name="Base.Theme.BoyCottResult" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/result_red</item>
+    </style>
 </resources>
