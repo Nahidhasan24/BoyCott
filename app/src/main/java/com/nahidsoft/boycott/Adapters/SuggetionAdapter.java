@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -65,15 +66,39 @@ public class SuggetionAdapter extends RecyclerView.Adapter<SuggetionAdapter.view
                         .putExtra("status","green")
                         .putExtra("image", product.getImage())
                         .putExtra("note", product.getReason())
-
+                        .putExtra("product", product)
                 );
             } else if (product.getStatus().equals("green")) {
                 holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultGreenActivity.class)
                         .putExtra("status","green")
                         .putExtra("image", product.getImage())
                         .putExtra("note", product.getReason())
-
+                        .putExtra("product", product)
                 );
+            }else if (product.getStatus().equals("yellow")) {
+//                holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultGreenActivity.class)
+//                        .putExtra("status","green")
+//                        .putExtra("image", product.getImage())
+//                        .putExtra("note", product.getReason())
+//                        .putExtra("product", product)
+//                );
+                Toast.makeText(holder.itemView.getContext(), "Yellow!", Toast.LENGTH_SHORT).show();
+            }else if (product.getStatus().equals("yellow")) {
+//                holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultGreenActivity.class)
+//                        .putExtra("status","green")
+//                        .putExtra("image", product.getImage())
+//                        .putExtra("note", product.getReason())
+//                        .putExtra("product", product)
+//                );
+                Toast.makeText(holder.itemView.getContext(), "Yellow!", Toast.LENGTH_SHORT).show();
+            }else if (product.getStatus().equals("default")) {
+//                holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultGreenActivity.class)
+//                        .putExtra("status","green")
+//                        .putExtra("image", product.getImage())
+//                        .putExtra("note", product.getReason())
+//                        .putExtra("product", product)
+//                );
+                Toast.makeText(holder.itemView.getContext(), "Default!", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -1,19 +1,14 @@
 package com.nahidsoft.boycott.Activitys;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -24,7 +19,7 @@ import com.nahidsoft.boycott.Models.Category;
 import com.nahidsoft.boycott.Models.Product;
 import com.nahidsoft.boycott.R;
 import com.nahidsoft.boycott.Utilitis.APIs;
-import com.nahidsoft.boycott.databinding.ActivityResultBinding;
+import com.nahidsoft.boycott.Utilitis.ProductRepository;
 import com.nahidsoft.boycott.databinding.ActivityResultGreen2Binding;
 
 import java.lang.reflect.Type;
@@ -41,6 +36,8 @@ public class ResultGreenActivity extends AppCompatActivity {
     String image, note;
     List<Category> categoryLis = new ArrayList<>();
     String TAG = "MyTag";
+    Product product;
+    ProductRepository repository;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -48,10 +45,11 @@ public class ResultGreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityResultGreen2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        image=getIntent().getStringExtra("image");
-        note=getIntent().getStringExtra("note");
-        selectedStatus=getIntent().getStringExtra("status");
-
+        repository = new ProductRepository(this);
+        image = getIntent().getStringExtra("image");
+        note = getIntent().getStringExtra("note");
+        product = getIntent().getParcelableExtra("product");
+        selectedStatus = getIntent().getStringExtra("status");
         categoryLis = retrieveCategoriesFromSharedPreferences();
 
         loadProductListFromPreferences();
@@ -63,15 +61,40 @@ public class ResultGreenActivity extends AppCompatActivity {
         suggetionAdapter = new SuggetionAdapter(getApplicationContext(), productList);
         binding.suggetionRecyclerView.setAdapter(suggetionAdapter);
     }
+
     private void loadData() {
-        binding.backBtn.setOnClickListener(v->{
+        Product b = repository.getProductById(product.getId());
+        if (b == null) {
+            binding.bookMark.setImageDrawable(getResources().getDrawable(R.drawable.baseline_bookmark_add_24));
+        } else {
+            binding.bookMark.setImageDrawable(getResources().getDrawable(R.drawable.baseline_bookmark_added_24));
+        }
+
+        binding.backBtn.setOnClickListener(v -> {
             onBackPressed();
         });
-        binding.noteTextTv.setText(""+note);
-        if (image.contains("https")){
+        binding.addListBtn.setOnClickListener(v -> {
+
+            if (b==null){
+                repository.addProduct(product);
+                binding.bookMark.setImageDrawable(getResources().getDrawable(R.drawable.baseline_bookmark_added_24));
+                Toast.makeText(this, "Product Added to My List", Toast.LENGTH_SHORT).show();
+            }else{
+                repository.deleteProductById(b.getId());
+                binding.bookMark.setImageDrawable(getResources().getDrawable(R.drawable.baseline_bookmark_add_24));
+                Toast.makeText(this, "Product Remove from My List", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.proofBtn.setOnClickListener(v -> {
+            Product data = repository.getProductById(product.getId());
+            Toast.makeText(this, "" + data.getTitle(), Toast.LENGTH_SHORT).show();
+        });
+
+        binding.noteTextTv.setText("" + note);
+        if (image.contains("https")) {
             Glide.with(getApplicationContext()).load(image).into(binding.productImage);
-        }else{
-            Glide.with(getApplicationContext()).load(APIs.IMAGE+image).into(binding.productImage);
+        } else {
+            Glide.with(getApplicationContext()).load(APIs.IMAGE + image).into(binding.productImage);
         }
     }
 
@@ -89,7 +112,7 @@ public class ResultGreenActivity extends AppCompatActivity {
                 productList.clear();
                 for (Product product : products) {
                     List<String> categorySplit = Arrays.asList(product.getCategory().split(","));
-                    Log.d(TAG, "loadProductListFromPreferences: "+categorySplit);
+                    Log.d(TAG, "loadProductListFromPreferences: " + categorySplit);
                     if (selectedStatus.equals(product.getStatus())) {
                         for (Category category : categoryLis) {
                             if (categorySplit.contains(category.getId())) {

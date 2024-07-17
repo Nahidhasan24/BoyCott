@@ -48,9 +48,10 @@ public class BoycottActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         loadProductListFromPreferences();
         brandList = loadBrandListFromPreferences();
+
         binding.productArrayList.setHasFixedSize(true);
         binding.productArrayList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
-        boycpottAdapter = new BoycpottAdapter(productList); // Pass initial productList to the adapter
+        boycpottAdapter = new BoycpottAdapter(productList);
         binding.productArrayList.setAdapter(boycpottAdapter);
         updateMessage(productList.size());
 

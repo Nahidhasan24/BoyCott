@@ -1,14 +1,9 @@
 package com.nahidsoft.boycott.Models;
 
-import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import androidx.annotation.RequiresApi;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class Product {
+public class Product implements Parcelable {
     private String id;
     private String title;
     private String createdTime;
@@ -32,13 +27,52 @@ public class Product {
         this.status = status;
         this.image = image;
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public List<Integer> getCategoryList() {
-        return Arrays.stream(category.split(","))
-                .map(Integer::parseInt)
-                .collect(Collectors.toList());
+
+    protected Product(Parcel in) {
+        id = in.readString();
+        title = in.readString();
+        createdTime = in.readString();
+        barCode = in.readString();
+        companyName = in.readString();
+        parentCompany = in.readString();
+        reason = in.readString();
+        category = in.readString();
+        status = in.readString();
+        image = in.readString();
     }
-    // Getters and setters
+
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeString(createdTime);
+        dest.writeString(barCode);
+        dest.writeString(companyName);
+        dest.writeString(parentCompany);
+        dest.writeString(reason);
+        dest.writeString(category);
+        dest.writeString(status);
+        dest.writeString(image);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // Getters
     public String getId() { return id; }
     public String getTitle() { return title; }
     public String getCreatedTime() { return createdTime; }

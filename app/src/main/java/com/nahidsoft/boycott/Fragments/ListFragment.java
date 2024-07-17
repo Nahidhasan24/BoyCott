@@ -30,6 +30,7 @@ import android.widget.Button;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nahidsoft.boycott.Activitys.BoycottActivity;
+import com.nahidsoft.boycott.Activitys.MyListActivity;
 import com.nahidsoft.boycott.Adapters.ProducrsAdapter;
 import com.nahidsoft.boycott.Utilitis.CustomSpinnerAdapter;
 import com.nahidsoft.boycott.Activitys.MainActivity;
@@ -98,6 +99,9 @@ public class ListFragment extends Fragment {
         });
        binding.boycottListBtn.setOnClickListener(v->{
           startActivity(new Intent(getActivity(), BoycottActivity.class));
+       });
+       binding.mylistBtn.setOnClickListener(v->{
+           startActivity(new Intent(getActivity(), MyListActivity.class));
        });
     }
 
