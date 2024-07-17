@@ -1,137 +1,294 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/backround"
     android:layout_height="match_parent"
     android:background="@color/result_red"
-    tools:context=".Activitys.ResultActivity">
+    tools:context=".Activitys.ResultRedActivity">
 
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:gravity="center|start">
+           <androidx.appcompat.widget.Toolbar
+               android:id="@+id/toolbar"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/backBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/baseline_arrow_back_ios_24"
-                app:tint="@color/white" />
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="50dp"
+                   android:layout_gravity="center"
+                   android:gravity="center|start">
 
-        </LinearLayout>
+                   <ImageView
+                       android:id="@+id/backBtn"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:src="@drawable/baseline_arrow_back_ios_24"
+                       app:tint="@color/white" />
 
-    </androidx.appcompat.widget.Toolbar>
+               </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:layout_margin="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar"
-        app:cardCornerRadius="20dp">
+           </androidx.appcompat.widget.Toolbar>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+           <androidx.cardview.widget.CardView
+               android:id="@+id/card"
+               android:layout_margin="20dp"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/toolbar"
+               app:cardCornerRadius="20dp">
 
-
-            <LinearLayout
-                android:id="@+id/imageSection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:background="@drawable/red_bg"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/productImage"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/test" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:layout_toEndOf="@id/imageSection"
-                android:gravity="center|start"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/productStatusTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="This Product is on the boycott list!"
-                    android:textColor="@color/result_red"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/addListBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/cart_btn_bg"
-                    android:padding="5dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:text="Add To My List" />
+               <RelativeLayout
+                   android:background="@color/white"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
 
 
-            </LinearLayout>
+                   <LinearLayout
+                       android:id="@+id/imageSection"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       >
+                       <LinearLayout
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_margin="20dp"
 
-            <RelativeLayout
-                android:id="@+id/note"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/imageSection"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp">
+                           android:gravity="center">
+                           <LinearLayout
+                               android:layout_margin="5dp"
+                               android:layout_width="match_parent"
 
-                <TextView
-                    android:id="@+id/noteTextTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center|start"
-                    android:text="@string/note"
-                    android:textSize="16sp" />
+                               android:background="@drawable/red_bg"
+                               android:layout_height="match_parent">
+                               <ImageView
+                                   android:id="@+id/productImage"
+                                   android:layout_width="100dp"
+                                   android:layout_height="100dp"
+                                   android:layout_margin="5dp"
+                                   android:src="@drawable/test" />
 
-
-            </RelativeLayout>
-
-
-            <TextView
-                android:id="@+id/proofBtn"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:layout_below="@id/note"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:text="Open Proof "
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:drawableEnd="@drawable/baseline_open_in_new_24"
-                android:background="@drawable/froof_bg"
-                android:paddingEnd="10dp"
-                android:layout_marginBottom="10dp"
-                />
-
-        </RelativeLayout>
+                           </LinearLayout>
 
 
-    </androidx.cardview.widget.CardView>
+                       </LinearLayout>
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_margin="20dp"
+                       android:layout_toEndOf="@id/imageSection"
+                       android:gravity="center|start"
+                       android:orientation="vertical">
+
+                       <TextView
+                           android:id="@+id/productStatusTv"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_centerVertical="true"
+                           android:text="This Product is on the boycott list!"
+                           android:textColor="@color/result_red"
+                           android:textSize="18sp" />
+
+                       <TextView
+                           android:id="@+id/addListBtn"
+                           android:layout_width="wrap_content"
+                           android:layout_height="30dp"
+                           android:layout_marginTop="10dp"
+                           android:background="@drawable/cart_btn_bg"
+                           android:padding="5dp"
+                           android:textColor="#0f2851"
+                           android:paddingStart="10dp"
+                           android:paddingEnd="10dp"
+                           android:text="Add To My List" />
+
+
+                   </LinearLayout>
+
+                   <RelativeLayout
+                       android:id="@+id/note"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_below="@id/imageSection"
+                       android:layout_marginStart="20dp"
+                       android:layout_marginEnd="20dp"
+                       android:layout_marginBottom="10dp">
+
+                       <TextView
+                           android:id="@+id/noteTextTv"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:gravity="center|start"
+                           android:text="@string/note"
+                           android:textColor="#0f2851"
+                           android:textSize="16sp" />
+
+
+                   </RelativeLayout>
+
+
+                   <TextView
+                       android:id="@+id/proofBtn"
+                       android:layout_width="150dp"
+                       android:layout_height="50dp"
+                       android:layout_below="@id/note"
+                       android:layout_centerHorizontal="true"
+                       android:layout_marginTop="10dp"
+                       android:text="Open Proof "
+                       android:gravity="center"
+                       android:textColor="@color/black"
+                       android:textSize="18sp"
+                       android:drawableEnd="@drawable/baseline_open_in_new_24"
+                       android:background="@drawable/froof_bg"
+                       android:paddingEnd="10dp"
+                       android:layout_marginBottom="10dp"
+                       />
+
+
+               </RelativeLayout>
+
+
+
+
+           </androidx.cardview.widget.CardView>
+           <LinearLayout
+               android:id="@+id/recycler"
+               android:orientation="vertical"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/card"
+               >
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Alternative Products"
+                   android:layout_marginStart="30dp"
+                   android:textSize="20sp"
+                   android:textColor="@color/white"
+                   />
+
+               <androidx.recyclerview.widget.RecyclerView
+                   android:layout_marginStart="30dp"
+                   android:layout_marginEnd="30dp"
+                   android:layout_marginTop="10dp"
+                   android:id="@+id/suggetionRecyclerView"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   >
+
+               </androidx.recyclerview.widget.RecyclerView>
+
+
+           </LinearLayout>
+
+           <LinearLayout
+               android:layout_marginTop="20dp"
+               android:layout_marginStart="30dp"
+               android:layout_marginEnd="30dp"
+               android:layout_below="@+id/recycler"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:padding="20dp"
+               android:gravity="center"
+               >
+               <RelativeLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content">
+
+                   <TextView
+                       android:layout_alignParentStart="true"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Share on :   "
+                       android:gravity="center|start"
+                       android:textSize="20sp"
+                       android:textColor="@color/white"
+                       />
+
+               </RelativeLayout>
+               <RelativeLayout
+                   android:layout_width="0dp"
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content">
+
+                 <ImageView
+                     android:layout_alignParentStart="true"
+                     android:layout_width="25dp"
+                     android:layout_height="25dp"
+                     android:src="@drawable/instagram"
+                     app:tint="@color/white" />
+
+               </RelativeLayout>
+               <RelativeLayout
+                   android:layout_width="0dp"
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content">
+
+                   <ImageView
+                       android:layout_alignParentStart="true"
+                       android:layout_width="25dp"
+                       android:layout_height="25dp"
+                       android:src="@drawable/facebook"
+                       app:tint="@color/white"
+                       />
+
+               </RelativeLayout>
+               <RelativeLayout
+                   android:layout_width="0dp"
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content">
+
+                   <ImageView
+                       android:layout_alignParentStart="true"
+                       android:layout_width="25dp"
+                       android:layout_height="25dp"
+                       android:src="@drawable/twitter"
+                       app:tint="@color/white"
+                       />
+
+               </RelativeLayout>
+               <RelativeLayout
+                   android:layout_width="0dp"
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content">
+
+                   <ImageView
+                       android:layout_alignParentStart="true"
+                       android:layout_width="25dp"
+                       android:layout_height="25dp"
+                       android:src="@drawable/linkedin"
+                       app:tint="@color/white"
+                       />
+
+               </RelativeLayout>
+               <RelativeLayout
+                   android:layout_width="0dp"
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content">
+
+                   <ImageView
+                       android:layout_alignParentStart="true"
+                       android:layout_width="30dp"
+                       android:layout_height="30dp"
+                       android:src="@drawable/whatsapp"
+                       app:tint="@color/white"
+                       />
+
+               </RelativeLayout>
+
+           </LinearLayout>
+
+       </RelativeLayout>
+
+   </ScrollView>
 
 </RelativeLayout>

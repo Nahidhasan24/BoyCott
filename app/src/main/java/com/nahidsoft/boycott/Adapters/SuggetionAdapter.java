@@ -1,6 +1,6 @@
 package com.nahidsoft.boycott.Adapters;
 
-import android.content.Intent;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.nahidsoft.boycott.Activitys.ResultRedActivity;
 import com.nahidsoft.boycott.Models.Product;
 import com.nahidsoft.boycott.R;
 import com.nahidsoft.boycott.Utilitis.APIs;
@@ -21,23 +20,26 @@ import com.nahidsoft.boycott.Utilitis.APIs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoycpottAdapter extends RecyclerView.Adapter<BoycpottAdapter.ViewHolder> {
+public class SuggetionAdapter extends RecyclerView.Adapter<SuggetionAdapter.viewholder> {
 
-    private List<Product> productList = new ArrayList<>();
 
-    public BoycpottAdapter(List<Product> productList) {
+    private Context context;
+    private List<Product> productList=new ArrayList<>();
+
+    public SuggetionAdapter(Context context, List<Product> productList) {
+        this.context = context;
         this.productList = productList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.products_item, parent, false);
-        return new ViewHolder(view);
+        return new SuggetionAdapter.viewholder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull viewholder holder, int position) {
         Product product = productList.get(position);
         if (product.getStatus().equals("red")) {
             holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.red_bg));
@@ -47,7 +49,6 @@ public class BoycpottAdapter extends RecyclerView.Adapter<BoycpottAdapter.ViewHo
             holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.yellow_bg));
         }
 
-
         if (product.getImage().contains("https")){
             Glide.with(holder.itemView.getContext()).load(product.getImage()).into(holder.imageView);
             holder.textView.setText("" + product.getTitle());
@@ -55,14 +56,6 @@ public class BoycpottAdapter extends RecyclerView.Adapter<BoycpottAdapter.ViewHo
             Glide.with(holder.itemView.getContext()).load(APIs.IMAGE+product.getImage()).into(holder.imageView);
             holder.textView.setText("" + product.getTitle());
         }
-        holder.itemView.setOnClickListener(v->{
-            holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultRedActivity.class)
-                    .putExtra("status",product.getStatus())
-                    .putExtra("image",product.getImage())
-                    .putExtra("note",product.getReason())
-
-            );
-        });
     }
 
     @Override
@@ -70,17 +63,12 @@ public class BoycpottAdapter extends RecyclerView.Adapter<BoycpottAdapter.ViewHo
         return productList.size();
     }
 
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
-        notifyDataSetChanged();
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class viewholder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textView;
         LinearLayout linearLayout;
 
-        public ViewHolder(@NonNull View itemView) {
+        public viewholder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.productImage);
             textView = itemView.findViewById(R.id.productTitle);

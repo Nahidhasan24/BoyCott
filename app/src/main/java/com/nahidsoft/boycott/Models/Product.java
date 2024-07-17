@@ -1,5 +1,13 @@
 package com.nahidsoft.boycott.Models;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Product {
     private String id;
     private String title;
@@ -24,7 +32,12 @@ public class Product {
         this.status = status;
         this.image = image;
     }
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public List<Integer> getCategoryList() {
+        return Arrays.stream(category.split(","))
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+    }
     // Getters and setters
     public String getId() { return id; }
     public String getTitle() { return title; }
