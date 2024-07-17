@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.nahidsoft.boycott.Activitys.ResultGreenActivity;
 import com.nahidsoft.boycott.Activitys.ResultRedActivity;
 import com.nahidsoft.boycott.Models.Product;
 import com.nahidsoft.boycott.R;
@@ -55,13 +56,22 @@ public class BoycpottAdapter extends RecyclerView.Adapter<BoycpottAdapter.ViewHo
             Glide.with(holder.itemView.getContext()).load(APIs.IMAGE+product.getImage()).into(holder.imageView);
             holder.textView.setText("" + product.getTitle());
         }
-        holder.itemView.setOnClickListener(v->{
-            holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultRedActivity.class)
-                    .putExtra("status",product.getStatus())
-                    .putExtra("image",product.getImage())
-                    .putExtra("note",product.getReason())
+        holder.itemView.setOnClickListener(v -> {
+            if (product.getStatus().equals("red")) {
+                holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultRedActivity.class)
+                        .putExtra("status","green")
+                        .putExtra("image", product.getImage())
+                        .putExtra("note", product.getReason())
 
-            );
+                );
+            } else if (product.getStatus().equals("green")) {
+                holder.itemView.getContext().startActivity(new Intent(holder.itemView.getContext(), ResultGreenActivity.class)
+                        .putExtra("status","green")
+                        .putExtra("image", product.getImage())
+                        .putExtra("note", product.getReason())
+
+                );
+            }
         });
     }
 

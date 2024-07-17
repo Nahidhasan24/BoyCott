@@ -56,6 +56,7 @@ public class SuggetionAdapter extends RecyclerView.Adapter<SuggetionAdapter.view
             Glide.with(holder.itemView.getContext()).load(APIs.IMAGE+product.getImage()).into(holder.imageView);
             holder.textView.setText("" + product.getTitle());
         }
+
     }
 
     @Override
