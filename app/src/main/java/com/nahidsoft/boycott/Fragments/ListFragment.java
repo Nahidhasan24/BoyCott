@@ -2,6 +2,7 @@ package com.nahidsoft.boycott.Fragments;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -24,12 +25,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.nahidsoft.boycott.Activitys.BoycottActivity;
 import com.nahidsoft.boycott.Adapters.ProducrsAdapter;
 import com.nahidsoft.boycott.Utilitis.CustomSpinnerAdapter;
-import com.nahidsoft.boycott.MainActivity;
+import com.nahidsoft.boycott.Activitys.MainActivity;
 import com.nahidsoft.boycott.Models.BrandModel;
 import com.nahidsoft.boycott.Models.Category;
 import com.nahidsoft.boycott.Models.Country;
@@ -48,6 +51,7 @@ import java.util.List;
 public class ListFragment extends Fragment {
 
     FragmentListBinding binding;
+
     ProducrsAdapter producrsAdapter;
     List<Product> searchList = new ArrayList<>();
     List<Product> mainList = new ArrayList<>();
@@ -58,6 +62,7 @@ public class ListFragment extends Fragment {
     List<Product> productList;
     List<Category> categoryLis;
     private List<Country> countryNames;
+    Button boycott,mylist;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +74,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         brandList = loadBrandListFromPreferences();
         categoryLis = retrieveCategoriesFromSharedPreferences();
@@ -90,6 +96,9 @@ public class ListFragment extends Fragment {
         binding.filterBtn.setOnClickListener(v -> {
             showDialog();
         });
+       binding.boycottListBtn.setOnClickListener(v->{
+          startActivity(new Intent(getActivity(), BoycottActivity.class));
+       });
     }
 
     private void showDialog() {

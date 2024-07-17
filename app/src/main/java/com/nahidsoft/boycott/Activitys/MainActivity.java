@@ -1,4 +1,4 @@
-package com.nahidsoft.boycott;
+package com.nahidsoft.boycott.Activitys;
 
 import android.Manifest;
 import android.content.Context;
@@ -39,6 +39,7 @@ import com.nahidsoft.boycott.Models.BrandModel;
 import com.nahidsoft.boycott.Models.Category;
 import com.nahidsoft.boycott.Models.Country;
 import com.nahidsoft.boycott.Models.Product;
+import com.nahidsoft.boycott.R;
 import com.nahidsoft.boycott.Utilitis.APIs;
 import com.nahidsoft.boycott.databinding.ActivityMainBinding;
 
