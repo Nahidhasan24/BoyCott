@@ -252,35 +252,19 @@ public class ScanFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            // Log the raw JSON response
-                            Log.d(TAG, "Raw Response: " + response.toString());
-
                             int status = response.optInt("status", -1);
-                            Log.d(TAG, "Status: " + status);
-
                             if (response.has("product")) {
                                 JSONObject product = response.getJSONObject("product");
-                                Log.d(TAG, "Product object found: " + product.toString());
-
                                 String productName = product.optString("product_name", "N/A");
-                                Log.d(TAG, "Product Name: " + productName);
-
                                 String brands = product.optString("brands", "N/A");
-                                Log.d(TAG, "Brands: " + brands);
-
                                 String imageUrl = "N/A";
                                 if (product.has("selected_images")) {
                                     JSONObject selectedImages = product.getJSONObject("selected_images");
                                     Log.d(TAG, "Selected Images object found: " + selectedImages.toString());
-
                                     if (selectedImages.has("front")) {
                                         JSONObject front = selectedImages.getJSONObject("front");
-                                        Log.d(TAG, "Front object found: " + front.toString());
-
                                         if (front.has("display")) {
                                             JSONObject display = front.getJSONObject("display");
-                                            Log.d(TAG, "Display object found: " + display.toString());
-
                                             imageUrl = display.optString("en", "N/A");
                                             Log.d(TAG, "Image URL: " + imageUrl);
                                         }
@@ -288,10 +272,9 @@ public class ScanFragment extends Fragment {
                                 }
 
                                 if (status == 0) {
-                                    progressDialog.dismiss();
                                     Toast.makeText(getActivity(), "Product not found !", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
                                 } else {
-
                                     processData(productName, brands, imageUrl, code);
                                 }
 
@@ -309,9 +292,15 @@ public class ScanFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Handle error
-                        barCodeLookUp(code);
-                        Log.e(TAG, "Volley Error: " + error.toString());
-                        //Toast.makeText(getActivity(), "Error fetching product details", Toast.LENGTH_LONG).show();
+                        if (error.getMessage()==null){
+                            progressDialog.dismiss();
+                            Toast.makeText(getActivity(), "Product not found !", Toast.LENGTH_LONG).show();
+                        }else{
+                            barCodeLookUp(code);
+                            Log.e(TAG, "Volley Error: " + error.toString());
+                        }
+
+
                     }
                 }
         );
@@ -322,7 +311,7 @@ public class ScanFragment extends Fragment {
     private void processData(String productName, String brands, String imageUrl, String code) {
         String status = "", parentCompany = "", category = "", reason = "";
         for (int i = 0; i < productList.size(); i++) {
-            if (productList.get(i).getCompanyName().toLowerCase().equals(brands.toLowerCase())) {
+            if (normalizeString(productList.get(i).getCompanyName()).toLowerCase().equals(normalizeString(brands.toLowerCase()))) {
                 Toast.makeText(getActivity(), "Status for " + productName + " " + productList.get(i).getStatus(), Toast.LENGTH_SHORT).show();
                 status = productList.get(i).getStatus();
                 parentCompany = productList.get(i).getParentCompany();
@@ -334,20 +323,35 @@ public class ScanFragment extends Fragment {
 
         sendAllData(productName,brands,parentCompany,category,imageUrl,code,status,reason);
     }
-
+    public static String normalizeString(String str) {
+        // Convert to lower case
+        str = str.toLowerCase();
+        // Remove non-alphanumeric characters
+        str = str.replaceAll("[^a-z0-9]", "");
+        return str;
+    }
     private void sendAllData(String productName, String brands, String parentCompany, String category, String imageUrl, String code, String status, String reason) {
 
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, APIs.CHECK,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, APIs.ADD_PRODUCT,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        progressDialog.dismiss();
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            String status = jsonObject.getString("status");
-
-
+                            String serverStatus = jsonObject.getString("status");
+                            if (status.equals("red")) {
+                                background.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.red_result_bg));
+                                statusTv.setText("Boycott");
+                            } else if (status.equals("green")) {
+                                background.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.green_result_bg));
+                                statusTv.setText("Not Boycott");
+                            } else if (status.equals("yellow")) {
+                                background.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.yellow_result_bg));
+                                statusTv.setText("Yellow");
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -364,7 +368,14 @@ public class ScanFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("barCode", text);
+                params.put("title",productName);
+                params.put("barCode",code);
+                params.put("companyName",brands);
+                params.put("parantcompany",parentCompany);
+                params.put("reason",reason);
+                params.put("category",category);
+                params.put("status",status);
+                params.put("image",imageUrl);
                 return params;
             }
 
