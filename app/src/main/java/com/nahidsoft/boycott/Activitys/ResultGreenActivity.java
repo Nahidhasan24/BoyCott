@@ -1,6 +1,7 @@
 package com.nahidsoft.boycott.Activitys;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,6 +64,9 @@ public class ResultGreenActivity extends AppCompatActivity {
         binding.suggetionRecyclerView.setAdapter(suggetionAdapter);
     }
     private void loadData() {
+        binding.backBtn.setOnClickListener(v->{
+            onBackPressed();
+        });
         binding.noteTextTv.setText(""+note);
         if (image.contains("https")){
             Glide.with(getApplicationContext()).load(image).into(binding.productImage);

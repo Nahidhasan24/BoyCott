@@ -58,6 +58,9 @@ public class ResultRedActivity extends AppCompatActivity {
     }
 
     private void loadData() {
+        binding.backBtn.setOnClickListener(v->{
+            onBackPressed();
+        });
         binding.noteTextTv.setText(""+note);
         if (image.contains("https")){
             Glide.with(getApplicationContext()).load(image).into(binding.productImage);
