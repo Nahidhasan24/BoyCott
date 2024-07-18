@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,12 +27,19 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nahidsoft.boycott.Activitys.BoycottActivity;
 import com.nahidsoft.boycott.Activitys.MyListActivity;
+import com.nahidsoft.boycott.Adapters.BrandAdapter;
+import com.nahidsoft.boycott.Adapters.CategoryAdapter;
+import com.nahidsoft.boycott.Adapters.LocationAdapter;
 import com.nahidsoft.boycott.Adapters.ProducrsAdapter;
 import com.nahidsoft.boycott.Utilitis.CustomSpinnerAdapter;
 import com.nahidsoft.boycott.Activitys.MainActivity;
@@ -47,12 +56,14 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ListFragment extends Fragment {
 
     FragmentListBinding binding;
-
     ProducrsAdapter producrsAdapter;
     List<Product> searchList = new ArrayList<>();
     List<Product> mainList = new ArrayList<>();
@@ -63,7 +74,36 @@ public class ListFragment extends Fragment {
     List<Product> productList;
     List<Category> categoryLis;
     private List<Country> countryNames;
-    Button boycott,mylist;
+    Button boycott, mylist;
+
+    ImageView close;
+
+    private LocationAdapter locationAdapter;
+    private BrandAdapter brandAdapter;
+    private CategoryAdapter categoryAdapter;
+
+    private AutoCompleteTextView searchViewBrand;
+    private AutoCompleteTextView searchViewLocation;
+    private AutoCompleteTextView searchViewCategory;
+    private Button btnUpdate, cancelBtn;
+
+    private ChipGroup chipGroupLocations;
+    private ChipGroup chipGroupBrands;
+    private ChipGroup chipGroupCategories;
+
+    private RecyclerView recyclerViewLocationSuggestions;
+    private RecyclerView recyclerViewBrandSuggestions;
+    private RecyclerView recyclerViewCategorySuggestions;
+
+    // To store selected filters
+    private List<String> selectedLocations = new ArrayList<>();
+    private List<String> selectedBrands = new ArrayList<>();
+    private List<String> selectedCategories = new ArrayList<>();
+
+    // To store previous selections temporarily
+    private List<String> tempSelectedLocations = new ArrayList<>();
+    private List<String> tempSelectedBrands = new ArrayList<>();
+    private List<String> tempSelectedCategories = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,10 +112,10 @@ public class ListFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         brandList = loadBrandListFromPreferences();
         categoryLis = retrieveCategoriesFromSharedPreferences();
@@ -97,20 +137,93 @@ public class ListFragment extends Fragment {
         binding.filterBtn.setOnClickListener(v -> {
             showDialog();
         });
-       binding.boycottListBtn.setOnClickListener(v->{
-          startActivity(new Intent(getActivity(), BoycottActivity.class));
-       });
-       binding.mylistBtn.setOnClickListener(v->{
-           startActivity(new Intent(getActivity(), MyListActivity.class));
-       });
+        binding.boycottListBtn.setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), BoycottActivity.class));
+        });
+        binding.mylistBtn.setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), MyListActivity.class));
+        });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void showDialog() {
 
         final Dialog dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_view);
 
+        searchViewBrand = dialog.findViewById(R.id.searchViewBrand);
+        searchViewLocation = dialog.findViewById(R.id.searchViewLocation);
+        searchViewCategory = dialog.findViewById(R.id.searchViewCategory);
+        btnUpdate = dialog.findViewById(R.id.btnUpdate);
+        cancelBtn = dialog.findViewById(R.id.canelBtn);
+
+        chipGroupLocations = dialog.findViewById(R.id.chipGroupLocations);
+        chipGroupBrands = dialog.findViewById(R.id.chipGroupBrands);
+        chipGroupCategories = dialog.findViewById(R.id.chipGroupCategories);
+
+        recyclerViewLocationSuggestions = dialog.findViewById(R.id.recyclerViewLocationSuggestions);
+        recyclerViewBrandSuggestions = dialog.findViewById(R.id.recyclerViewBrandSuggestions);
+        recyclerViewCategorySuggestions = dialog.findViewById(R.id.recyclerViewCategorySuggestions);
+
+        locationAdapter = new LocationAdapter(countryNames, this::onLocationItemClick);
+        brandAdapter = new BrandAdapter(brandList, this::onBrandItemClick);
+        categoryAdapter = new CategoryAdapter(categoryLis, this::onCategoryItemClick);
+
+        recyclerViewLocationSuggestions.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewLocationSuggestions.setAdapter(locationAdapter);
+
+        recyclerViewBrandSuggestions.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewBrandSuggestions.setAdapter(brandAdapter);
+
+        recyclerViewCategorySuggestions.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewCategorySuggestions.setAdapter(categoryAdapter);
+
+        // Restore previous selections
+        addSelectedChips(chipGroupLocations, tempSelectedLocations);
+        addSelectedChips(chipGroupBrands, tempSelectedBrands);
+        addSelectedChips(chipGroupCategories, tempSelectedCategories);
+
+        cancelBtn.setOnClickListener(v -> {
+            selectedLocations.clear();
+            selectedBrands.clear();
+            selectedCategories.clear();
+            updateProductList(productList);
+            dialog.dismiss();
+        });
+
+        searchViewLocation.setOnItemClickListener((parent, view, position, id) -> {
+            String query = (String) parent.getItemAtPosition(position);
+            addChipToGroup(chipGroupLocations, query, selectedLocations);
+        });
+
+        searchViewBrand.setOnItemClickListener((parent, view, position, id) -> {
+            String query = (String) parent.getItemAtPosition(position);
+            addChipToGroup(chipGroupBrands, query, selectedBrands);
+        });
+
+        searchViewCategory.setOnItemClickListener((parent, view, position, id) -> {
+            String query = (String) parent.getItemAtPosition(position);
+            addChipToGroup(chipGroupCategories, query, selectedCategories);
+        });
+
+        close = dialog.findViewById(R.id.closeBtn);
+        close.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        btnUpdate.setOnClickListener(v -> {
+            // Save current selections
+            tempSelectedLocations.clear();
+            tempSelectedLocations.addAll(selectedLocations);
+            tempSelectedBrands.clear();
+            tempSelectedBrands.addAll(selectedBrands);
+            tempSelectedCategories.clear();
+            tempSelectedCategories.addAll(selectedCategories);
+
+            filterProducts();
+            dialog.dismiss();
+        });
 
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -118,6 +231,92 @@ public class ListFragment extends Fragment {
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
 
+        setupAutoCompleteAdapters();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void setupAutoCompleteAdapters() {
+        List<String> locationNames = countryNames.stream().map(Country::getCountryName).collect(Collectors.toList());
+        List<String> brandNames = brandList.stream().map(BrandModel::getCompanyName).collect(Collectors.toList());
+        List<String> categoryNames = categoryLis.stream().map(Category::getName).collect(Collectors.toList());
+
+        ArrayAdapter<String> locationAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, locationNames);
+        ArrayAdapter<String> brandAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, brandNames);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, categoryNames);
+
+        searchViewLocation.setAdapter(locationAdapter);
+        searchViewBrand.setAdapter(brandAdapter);
+        searchViewCategory.setAdapter(categoryAdapter);
+
+        searchViewLocation.setThreshold(1);
+        searchViewBrand.setThreshold(1);
+        searchViewCategory.setThreshold(1);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void addSelectedChips(ChipGroup chipGroup, List<String> selectedItems) {
+        chipGroup.removeAllViews();
+        for (String item : selectedItems) {
+            addChipToGroup(chipGroup, item, selectedItems);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void addChipToGroup(ChipGroup chipGroup, String text, List<String> selectedItems) {
+        if (!selectedItems.contains(text)) {
+            selectedItems.add(text);
+            Chip chip = new Chip(getActivity());
+            chip.setText(text);
+            chip.setCloseIconVisible(true);
+            chip.setOnCloseIconClickListener(v -> {
+                selectedItems.remove(text);
+                chipGroup.removeView(chip);
+                filterProducts(); // Update the product list when a chip is removed
+            });
+            chipGroup.addView(chip);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void filterProducts() {
+        List<Product> filteredProducts = productList.stream()
+                .filter(product -> (selectedLocations.isEmpty() || brandList.stream().anyMatch(brand -> brand.getCompanyName().equalsIgnoreCase(product.getParentCompany()) && selectedLocations.contains(brand.getCountry()))) &&
+                        (selectedBrands.isEmpty() || selectedBrands.contains(product.getParentCompany())) &&
+                        (selectedCategories.isEmpty() || containsAnyCategory(product.getCategory(), selectedCategories)))
+                .collect(Collectors.toList());
+
+        updateProductList(filteredProducts);
+    }
+
+    private boolean containsAnyCategory(String categories, List<String> selectedCategories) {
+        if (categories == null || categories.isEmpty()) {
+            return false;
+        }
+        List<String> categoryList = Arrays.asList(categories.split(","));
+        for (String selectedCategory : selectedCategories) {
+            if (categoryList.contains(getIDByName(selectedCategory))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void onLocationItemClick(Country selectedCountry) {
+        addChipToGroup(chipGroupLocations, selectedCountry.getCountryName(), selectedLocations);
+        filterProducts(); // Update the product list when an item is clicked
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void onBrandItemClick(BrandModel selectedBrand) {
+        addChipToGroup(chipGroupBrands, selectedBrand.getCompanyName(), selectedBrands);
+        filterProducts(); // Update the product list when an item is clicked
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void onCategoryItemClick(Category selectedCategory) {
+        addChipToGroup(chipGroupCategories, selectedCategory.getName(), selectedCategories);
+        filterProducts(); // Update the product list when an item is clicked
     }
 
     private void setupSpinners() {
@@ -129,7 +328,11 @@ public class ListFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                checkAndFilterProducts();
+                String selectedBrand = parent.getItemAtPosition(position).toString();
+                if (!selectedBrand.equals("Brand")) {
+                    addChipToGroup(chipGroupBrands, selectedBrand, selectedBrands);
+                    filterProducts();
+                }
             }
 
             @Override
@@ -142,7 +345,11 @@ public class ListFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                checkAndFilterProducts();
+                String selectedCategory = parent.getItemAtPosition(position).toString();
+                if (!selectedCategory.equals("Category")) {
+                    addChipToGroup(chipGroupCategories, selectedCategory, selectedCategories);
+                    filterProducts();
+                }
             }
 
             @Override
@@ -155,7 +362,11 @@ public class ListFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                checkAndFilterProducts();
+                String selectedLocation = parent.getItemAtPosition(position).toString();
+                if (!selectedLocation.equals("Location")) {
+                    addChipToGroup(chipGroupLocations, selectedLocation, selectedLocations);
+                    filterProducts();
+                }
             }
 
             @Override
@@ -215,9 +426,9 @@ public class ListFragment extends Fragment {
         } else {
             matchedBrandProducts.clear();
             for (Product product : productList) {
-                boolean matchesBrand = "Brand".equals(selectedBrand) || product.getParentCompany().equalsIgnoreCase(selectedBrand);
-                boolean matchesCategory = "Category".equals(selectedCategory) || product.getCategory().contains(getIDByName(selectedCategory));
-                boolean matchesLocation = "Location".equals(selectedLocation) || brandList.stream().anyMatch(bm -> bm.getCompanyName().equalsIgnoreCase(product.getParentCompany()) && bm.getCountry().equalsIgnoreCase(selectedLocation));
+                boolean matchesBrand = "Brand".equals(selectedBrand) || selectedBrands.contains(product.getParentCompany());
+                boolean matchesCategory = "Category".equals(selectedCategory) || containsAnyCategory(product.getCategory(), selectedCategories);
+                boolean matchesLocation = "Location".equals(selectedLocation) || brandList.stream().anyMatch(bm -> bm.getCompanyName().equalsIgnoreCase(product.getParentCompany()) && selectedLocations.contains(bm.getCountry()));
 
                 if (matchesBrand && matchesCategory && matchesLocation) {
                     matchedBrandProducts.add(product);

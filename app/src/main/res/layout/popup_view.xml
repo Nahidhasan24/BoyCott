@@ -1,27 +1,155 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/round_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activitys.MainActivity">
 
     <ImageView
+        android:id="@+id/closeBtn"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/baseline_close_24"
         android:layout_margin="10dp"
         android:layout_alignParentEnd="true"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/closeBtn">
 
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/baseline_close_24"
-        android:layout_margin="10dp"
-        android:layout_centerInParent="true"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Location :"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
 
+        <AutoCompleteTextView
+            android:id="@+id/searchViewLocation"
+            android:background="@drawable/ed_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Locations"
+            android:textColor="@android:color/black"
+            android:padding="15dp"
+            android:layout_marginTop="8dp"/>
 
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupLocations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:singleLine="true"
+            app:singleSelection="false"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewLocationSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Brand :"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
+
+        <AutoCompleteTextView
+            android:id="@+id/searchViewBrand"
+            android:background="@drawable/ed_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Brands"
+            android:textColor="@android:color/black"
+            android:padding="15dp"
+            android:layout_marginTop="8dp"/>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupBrands"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:singleLine="true"
+            app:singleSelection="false"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewBrandSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category :"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            />
+
+        <AutoCompleteTextView
+            android:id="@+id/searchViewCategory"
+            android:background="@drawable/ed_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Categories"
+            android:textColor="@android:color/black"
+            android:padding="15dp"
+            android:layout_marginTop="8dp"/>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:singleLine="true"
+            app:singleSelection="false"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCategorySuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            >
+            <Button
+                android:id="@+id/canelBtn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:text="Cancel"
+                android:backgroundTint="@color/ash"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/black"
+                android:layout_marginEnd="10dp"
+                />
+            <Button
+                android:id="@+id/btnUpdate"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:text="Update Now"
+                android:textColor="@color/white"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
