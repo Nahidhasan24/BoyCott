@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".Fragments.ListFragment">
 
     <LinearLayout
@@ -34,8 +35,7 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="10dp"
                 android:textColor="@color/black"
-                android:textSize="11sp" /> <!-- Smaller text for autocomplete -->
-
+                android:textSize="11sp" />
 
             <LinearLayout
                 android:id="@+id/filterBtn"
@@ -63,11 +63,7 @@
                     android:text="Filter"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
-
-
             </LinearLayout>
-
-
         </LinearLayout>
 
         <LinearLayout
@@ -76,48 +72,43 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:orientation="horizontal"
+            android:gravity="center"
             android:background="@drawable/round_bg_section"
             android:weightSum="12">
 
             <Button
                 android:layout_width="0dp"
                 android:layout_weight="4"
-                android:layout_height="60dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
+                android:layout_height="50dp"
                 android:text="All Products"
                 android:textColor="@color/black"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:backgroundTint="@android:color/white"/>
+                android:backgroundTint="@android:color/white" />
 
             <Button
                 android:id="@+id/boycottListBtn"
                 android:layout_width="0dp"
                 android:layout_weight="4"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:text="Boycott List"
                 android:textColor="@color/black"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:backgroundTint="@android:color/white"/>
+                android:backgroundTint="@android:color/white" />
 
             <Button
                 android:id="@+id/mylistBtn"
                 android:layout_width="0dp"
                 android:layout_weight="4"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:text="My List"
                 android:textColor="@color/black"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:backgroundTint="@android:color/white"/>
-
-
+                android:backgroundTint="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -129,33 +120,36 @@
             android:orientation="horizontal"
             android:weightSum="9">
 
-            <Spinner
-                android:id="@+id/spinnerBrand"
+            <TextView
+                android:id="@+id/textViewSpinnerBrand"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
                 android:layout_weight="3"
-                android:background="@drawable/spinner_bg" />
+                android:background="@drawable/spinner_bg"
+                android:gravity="center"
+                android:text="Select Brand" />
 
-            <Spinner
-                android:id="@+id/spinnerCategory"
+            <TextView
+                android:id="@+id/textViewSpinnerCategory"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
                 android:layout_weight="3"
-                android:background="@drawable/spinner_bg" />
+                android:background="@drawable/spinner_bg"
+                android:gravity="center"
+                android:text="Select Category" />
 
-            <Spinner
-                android:id="@+id/spinnerLocation"
+            <TextView
+                android:id="@+id/textViewSpinnerLocation"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
                 android:layout_weight="3"
-                android:background="@drawable/spinner_bg" />
-
-
+                android:background="@drawable/spinner_bg"
+                android:gravity="center"
+                android:text="Select Location" />
         </LinearLayout>
-
     </LinearLayout>
 
     <TextView
@@ -168,6 +162,7 @@
         android:text="Shows 1023 Products"
         android:textColor="@color/red"
         android:textSize="16sp" />
+
     <TextView
         android:id="@+id/sortTextView"
         android:layout_width="match_parent"
@@ -180,12 +175,13 @@
         android:textSize="16sp" />
 
     <androidx.recyclerview.widget.RecyclerView
+        tools:listitem="@layout/products_item"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         android:id="@+id/productArrayList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/sortTextView"
         android:layout_marginTop="10dp">
-
     </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
@@ -196,6 +192,4 @@
         android:text="Empty List"
         android:textSize="20sp"
         android:visibility="gone" />
-
-
 </RelativeLayout>

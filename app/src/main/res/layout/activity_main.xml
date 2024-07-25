@@ -12,11 +12,13 @@
         />
 
     <com.google.android.material.bottomappbar.BottomAppBar
+        android:backgroundTint="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:id="@+id/bottomAppBar"
         app:fabCradleMargin="10dp"
+        app:subtitleTextColor="@color/primary"
         app:fabCradleRoundedCornerRadius="10dp"
         app:fabCradleVerticalOffset="10dp"
         tools:ignore="BottomAppBar">
@@ -28,7 +30,6 @@
             app:labelVisibilityMode="labeled"
             app:menu="@menu/menu"
             android:background="@drawable/transparent_background"
-
             />
     </com.google.android.material.bottomappbar.BottomAppBar>
    <com.google.android.material.floatingactionbutton.FloatingActionButton

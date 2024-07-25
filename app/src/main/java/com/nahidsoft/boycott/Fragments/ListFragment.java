@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.chip.Chip;
@@ -76,9 +77,7 @@ public class ListFragment extends Fragment {
     private List<Country> countryNames;
     Button boycott, mylist;
     TextView sortTextView;
-
     ImageView close;
-
     private LocationAdapter locationAdapter;
     private BrandAdapter brandAdapter;
     private CategoryAdapter categoryAdapter;
@@ -122,13 +121,13 @@ public class ListFragment extends Fragment {
         producrsAdapter = new ProducrsAdapter();
         binding.productArrayList.setAdapter(producrsAdapter);
 
-        sortTextView = binding.sortTextView; // Add this line to bind the sortTextView
+        sortTextView = binding.sortTextView;
 
         setupSpinners();
 
         if (mainActivity != null) {
             productList = mainActivity.getProductList();
-            updateProductList(productList); // Sort products when first loaded
+            updateProductList(productList);
         }
 
         setupSearchAutoComplete();
@@ -336,109 +335,95 @@ public class ListFragment extends Fragment {
         filterProducts(); // Update the product list when an item is clicked
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupSpinners() {
-        setupSpinnerCountry(countryNames);
-        setupSpinnerBrand(brandList);
-        setupSpinnerCategory(categoryLis);
-
-        binding.spinnerBrand.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedBrand = parent.getItemAtPosition(position).toString();
-                if (!selectedBrand.equals("Brand")) {
-                    selectedBrands.clear();
-                    selectedBrands.add(selectedBrand);
-                } else {
-                    selectedBrands.clear();
+        binding.textViewSpinnerLocation.setOnClickListener(v -> showSearchableSpinnerDialog(
+                countryNames.stream().map(Country::getCountryName).collect(Collectors.toList()),
+                item -> {
+                    if (item.equals("Remove selection")) {
+                        selectedLocations.clear();
+                        binding.textViewSpinnerLocation.setText("Select Location");
+                    } else {
+                        selectedLocations.clear();
+                        selectedLocations.add(item);
+                        binding.textViewSpinnerLocation.setText(item);
+                    }
+                    filterProducts();
                 }
-                filterProducts();
-            }
+        ));
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
-
-        binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCategory = parent.getItemAtPosition(position).toString();
-                if (!selectedCategory.equals("Category")) {
-                    selectedCategories.clear();
-                    selectedCategories.add(selectedCategory);
-                } else {
-                    selectedCategories.clear();
+        binding.textViewSpinnerBrand.setOnClickListener(v -> showSearchableSpinnerDialog(
+                brandList.stream().map(BrandModel::getCompanyName).collect(Collectors.toList()),
+                item -> {
+                    if (item.equals("Remove selection")) {
+                        selectedBrands.clear();
+                        binding.textViewSpinnerBrand.setText("Select Brand");
+                    } else {
+                        selectedBrands.clear();
+                        selectedBrands.add(item);
+                        binding.textViewSpinnerBrand.setText(item);
+                    }
+                    filterProducts();
                 }
-                filterProducts();
-            }
+        ));
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
-
-        binding.spinnerLocation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedLocation = parent.getItemAtPosition(position).toString();
-                if (!selectedLocation.equals("Location")) {
-                    selectedLocations.clear();
-                    selectedLocations.add(selectedLocation);
-                } else {
-                    selectedLocations.clear();
+        binding.textViewSpinnerCategory.setOnClickListener(v -> showSearchableSpinnerDialog(
+                categoryLis.stream().map(Category::getName).collect(Collectors.toList()),
+                item -> {
+                    if (item.equals("Remove selection")) {
+                        selectedCategories.clear();
+                        binding.textViewSpinnerCategory.setText("Select Category");
+                    } else {
+                        selectedCategories.clear();
+                        selectedCategories.add(item);
+                        binding.textViewSpinnerCategory.setText(item);
+                    }
+                    filterProducts();
                 }
-                filterProducts();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
-        });
+        ));
     }
 
-    private void setupSpinnerCountry(List<Country> countryNames) {
-        List<String> items = new ArrayList<>();
-        items.add("Location");
+    private void showSearchableSpinnerDialog(List<String> items, OnItemSelectedListener listener) {
+        Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_searchable_spinner);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        for (Country country : countryNames) {
-            items.add(country.getCountryName());
-        }
+        AutoCompleteTextView searchAutoCompleteTextView = dialog.findViewById(R.id.searchAutoCompleteTextView);
+        ListView listView = dialog.findViewById(R.id.listView);
 
-        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
-        binding.spinnerLocation.setAdapter(adapter);
+        // Add "Remove selection" option at the top
+        List<String> itemsWithRemoveOption = new ArrayList<>();
+        itemsWithRemoveOption.add("Remove selection");
+        itemsWithRemoveOption.addAll(items);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, itemsWithRemoveOption);
+        listView.setAdapter(adapter);
+
+        searchAutoCompleteTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedItem = adapter.getItem(position);
+            listener.onItemSelected(selectedItem);
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
-    private void setupSpinnerBrand(List<BrandModel> brandList) {
-        List<String> items = new ArrayList<>();
-        items.add("Brand");
-
-        for (BrandModel brand : brandList) {
-            items.add(brand.getCompanyName());
-        }
-
-        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
-        binding.spinnerBrand.setAdapter(adapter);
-    }
-
-    private void setupSpinnerCategory(List<Category> categoryList) {
-        List<String> items = new ArrayList<>();
-        items.add("Category");
-
-        for (Category category : categoryList) {
-            items.add(category.getName());
-        }
-
-        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getActivity(), R.layout.spinner_item_with_arrow, items);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_with_arrow);
-        binding.spinnerCategory.setAdapter(adapter);
+    interface OnItemSelectedListener {
+        void onItemSelected(String item);
     }
 
     private void updateMessage(int size) {
@@ -509,8 +494,7 @@ public class ListFragment extends Fragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString("categoryList", null);
-        Type type = new TypeToken<ArrayList<Category>>() {
-        }.getType();
+        Type type = new TypeToken<ArrayList<Category>>() {}.getType();
         List<Category> categoryList = gson.fromJson(json, type);
         if (categoryList == null) {
             categoryList = new ArrayList<>();
@@ -525,12 +509,11 @@ public class ListFragment extends Fragment {
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_dropdown_item_custom, productTitles);
         binding.searchET.setAdapter(adapter);
-        binding.searchET.setThreshold(1); // Start suggesting from the first character
+        binding.searchET.setThreshold(1);
 
         binding.searchET.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -538,30 +521,22 @@ public class ListFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
-        binding.searchET.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItem = (String) parent.getItemAtPosition(position);
-                filter(selectedItem);
-            }
+        binding.searchET.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedItem = (String) parent.getItemAtPosition(position);
+            filter(selectedItem);
         });
 
-        // Clear text button functionality
-        binding.searchET.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (event.getRawX() >= (binding.searchET.getRight() - binding.searchET.getCompoundDrawables()[2].getBounds().width())) {
-                        binding.searchET.setText("");
-                        return true;
-                    }
+        binding.searchET.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (binding.searchET.getRight() - binding.searchET.getCompoundDrawables()[2].getBounds().width())) {
+                    binding.searchET.setText("");
+                    return true;
                 }
-                return false;
             }
+            return false;
         });
     }
 
