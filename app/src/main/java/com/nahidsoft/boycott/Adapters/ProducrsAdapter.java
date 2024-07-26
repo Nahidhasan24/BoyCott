@@ -37,13 +37,13 @@ public class ProducrsAdapter extends RecyclerView.Adapter<ProducrsAdapter.viewho
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
         Product product = productList.get(position);
 
-        if (product.getStatus().equals("red")) {
-            holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.red_bg));
-        } else if (product.getStatus().equals("green")) {
-            holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.green_bg));
-        } else if (product.getStatus().equals("yellow")) {
-            holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.yellow_bg));
-        }
+//        if (product.getStatus().equals("red")) {
+//            holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.red_bg));
+//        } else if (product.getStatus().equals("green")) {
+//            holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.green_bg));
+//        } else if (product.getStatus().equals("yellow")) {
+//            holder.linearLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.yellow_bg));
+//        }
 
         if (product.getImage().contains("https")) {
             Glide.with(holder.itemView.getContext()).load(product.getImage()).into(holder.imageView);

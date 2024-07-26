@@ -3,7 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary">#4a6afb</color>
-    <color name="nav_item_color">#4a6afb</color>
     <color name="secondColor">#627dfc</color>
     <color name="red">#FF0000</color>
     <color name="green">#13B600</color>
@@ -12,3 +11,4 @@
     <color name="ash">#a5aebe</color>
     <color name="lightWhite">#d9d9d9</color>
 </resources>
+

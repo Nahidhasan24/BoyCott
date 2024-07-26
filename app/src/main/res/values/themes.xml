@@ -20,5 +20,8 @@
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/green</item>
     </style>
+    <style name="NoBackgroundBottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="itemBackground">@android:color/transparent</item>
+    </style>
 
 </resources>

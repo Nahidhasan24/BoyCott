@@ -51,90 +51,103 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-
                     <LinearLayout
-                        android:id="@+id/imageSection"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/top"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        >
+                        android:orientation="horizontal">
+
                         <LinearLayout
+                            android:id="@+id/imageSection"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="20dp"
-
-                            android:gravity="center">
+                            >
                             <LinearLayout
-                                android:layout_margin="5dp"
-                                android:layout_width="match_parent"
-
-                                android:background="@drawable/green_bg"
-                                android:layout_height="match_parent">
-                                <ImageView
-                                    android:id="@+id/productImage"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="20dp"
+                                android:gravity="center">
+                                <LinearLayout
                                     android:layout_margin="5dp"
-                                    android:src="@drawable/test" />
+                                    android:layout_width="match_parent"
+                                    android:background="@drawable/green_bg"
+                                    android:layout_height="match_parent">
+                                    <ImageView
+                                        android:id="@+id/productImage"
+                                        android:layout_width="100dp"
+                                        android:layout_height="100dp"
+                                        android:layout_margin="5dp"
+                                        android:src="@drawable/test" />
 
+                                </LinearLayout>
+
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/imageSection"
+                            android:gravity="center|start"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/productStatusTv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="This Product is not on the boycott list!"
+                                android:textColor="@color/green"
+                                android:textSize="18sp" />
+
+
+
+
+                            <LinearLayout
+                                android:id="@+id/addListBtn"
+                                android:background="@drawable/cart_btn_bg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp"
+                                >
+                                <TextView
+                                    android:layout_gravity="center"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:padding="5dp"
+                                    android:textColor="#0f2851"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
+                                    android:textSize="13sp"
+                                    android:text="Add To My List" />
+
+                                <ImageView
+                                    android:id="@+id/bookMark"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/baseline_bookmark_add_24"
+                                    android:layout_marginEnd="10dp"/>
                             </LinearLayout>
 
 
+
+
                         </LinearLayout>
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="20dp"
-                        android:layout_toEndOf="@id/imageSection"
-                        android:gravity="center|start"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/productStatusTv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="This Product is not the boycott list!"
-                            android:textColor="@color/green"
-                            android:textSize="18sp" />
-
-                        <LinearLayout
-                            android:id="@+id/addListBtn"
-                            android:background="@drawable/cart_btn_bg"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="10dp"
-                            >
-                            <TextView
-
-                                android:layout_width="wrap_content"
-                                android:layout_height="30dp"
-                                android:padding="5dp"
-                                android:textColor="#0f2851"
-                                android:paddingStart="10dp"
-                                android:paddingEnd="10dp"
-                                android:text="Add To My List" />
-
-                            <ImageView
-                                android:id="@+id/bookMark"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/baseline_bookmark_add_24"
-                                android:layout_marginEnd="10dp"/>
-                        </LinearLayout>
 
 
-                    </LinearLayout>
 
                     <RelativeLayout
                         android:id="@+id/note"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/imageSection"
+                        android:layout_below="@id/top"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp">
@@ -162,7 +175,7 @@
                         android:text="Open Proof "
                         android:gravity="center"
                         android:textColor="@color/black"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:drawableEnd="@drawable/baseline_open_in_new_24"
                         android:background="@drawable/froof_bg"
                         android:paddingEnd="10dp"

@@ -342,7 +342,7 @@ public class ListFragment extends Fragment {
                 item -> {
                     if (item.equals("Remove selection")) {
                         selectedLocations.clear();
-                        binding.textViewSpinnerLocation.setText("Select Location");
+                        binding.textViewSpinnerLocation.setText("Location");
                     } else {
                         selectedLocations.clear();
                         selectedLocations.add(item);
@@ -357,7 +357,7 @@ public class ListFragment extends Fragment {
                 item -> {
                     if (item.equals("Remove selection")) {
                         selectedBrands.clear();
-                        binding.textViewSpinnerBrand.setText("Select Brand");
+                        binding.textViewSpinnerBrand.setText("Brand");
                     } else {
                         selectedBrands.clear();
                         selectedBrands.add(item);
@@ -372,7 +372,7 @@ public class ListFragment extends Fragment {
                 item -> {
                     if (item.equals("Remove selection")) {
                         selectedCategories.clear();
-                        binding.textViewSpinnerCategory.setText("Select Category");
+                        binding.textViewSpinnerCategory.setText("Category");
                     } else {
                         selectedCategories.clear();
                         selectedCategories.add(item);
