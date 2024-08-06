@@ -2,20 +2,34 @@ package com.nahidsoft.boycott.Activitys;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -26,6 +40,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.karumi.dexter.Dexter;
@@ -33,7 +50,10 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.nahidsoft.boycott.Fragments.BoyCottFragment;
+import com.nahidsoft.boycott.Fragments.BoycottListFragment;
 import com.nahidsoft.boycott.Fragments.ListFragment;
+import com.nahidsoft.boycott.Fragments.MyListFragment;
 import com.nahidsoft.boycott.Fragments.ScanFragment;
 import com.nahidsoft.boycott.Models.BrandModel;
 import com.nahidsoft.boycott.Models.Category;
@@ -43,6 +63,7 @@ import com.nahidsoft.boycott.R;
 import com.nahidsoft.boycott.Utilitis.APIs;
 import com.nahidsoft.boycott.databinding.ActivityMainBinding;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,24 +75,70 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    ActivityMainBinding binding;
-    String TAG = "MyTag";
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle toggle;
+    private ActivityMainBinding binding;
     private List<Product> productList = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private static final String PREFS_NAME = "MyPrefs";
     private static final String PRODUCT_LIST_KEY = "ProductList";
     private static final String BRAND_LIST_KEY = "brand_list";
-    List<BrandModel> brandList = new ArrayList<>();
-
+    private List<BrandModel> brandList = new ArrayList<>();
+    private static final String TAG = "MainActivity";
+    private TabLayout tabLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        tabLayout = findViewById(R.id.tabLayout);
+        binding.search.setOnClickListener(v->{
+            startActivity(new Intent(getApplicationContext(),SearchActivity.class));
+        });
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.nav_home:
+//                        fragmentLoad(new ListFragment());
+//                        break;
+//                    case R.id.nav_scan:
+//                        fragmentLoad(new ScanFragment());
+//                        break;
+//                    // Add more cases for other menu items
+//                }
+                drawerLayout.closeDrawers();
+                return true;
+            }
+        });
+
+        // Set OnClickListener for navImage
+        ImageView navImage = findViewById(R.id.navImage);
+        navImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            }
+        });
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
         getBrands();
         getCategory();
         getCountry();
+
+
+
         if (isNetworkAvailable()) {
             getProducts();
         } else {
@@ -83,7 +150,47 @@ public class MainActivity extends AppCompatActivity {
         binding.fab.setOnClickListener(v -> {
             fragmentLoad(new ScanFragment());
         });
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        fragmentLoad(new ListFragment());
+                        break;
+                    case 1:
+                        fragmentLoad(new BoycottListFragment());
+                        break;
+                    case 2:
+                        fragmentLoad(new MyListFragment());
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // No action needed here
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // No action needed here
+            }
+        });
+
+        // Example to load fragment using the fragmentLoad method
+        binding.fab.setOnClickListener(v -> {
+            fragmentLoad(new ScanFragment());
+        });
+
+        // Add tabs to the TabLayout
+        tabLayout.addTab(tabLayout.newTab().setText("All Products"));
+        tabLayout.addTab(tabLayout.newTab().setText("Boycott List"));
+        tabLayout.addTab(tabLayout.newTab().setText("My List"));
+
+
     }
+
+
 
     private void getCountry() {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -425,4 +532,5 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
+
 }

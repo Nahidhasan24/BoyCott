@@ -46,6 +46,7 @@ public class MyListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding=ActivityMyListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         repository = new ProductRepository(this);
         productList = repository.getAllProducts();
         binding.productArrayList.setHasFixedSize(true);

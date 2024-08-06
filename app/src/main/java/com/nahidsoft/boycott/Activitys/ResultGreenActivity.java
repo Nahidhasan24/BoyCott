@@ -1,6 +1,7 @@
 package com.nahidsoft.boycott.Activitys;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -71,7 +72,7 @@ public class ResultGreenActivity extends AppCompatActivity {
         }
 
         binding.backBtn.setOnClickListener(v -> {
-            onBackPressed();
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
         });
         binding.addListBtn.setOnClickListener(v -> {
 

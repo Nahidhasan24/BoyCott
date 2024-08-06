@@ -10,5 +10,16 @@
     <color name="result_red">#fc5a5a</color>
     <color name="ash">#a5aebe</color>
     <color name="lightWhite">#d9d9d9</color>
+
+    <color name="dialogBackground">#FFFFFF</color>
+    <color name="dialogTextColor">#000000</color>
+    <color name="bg">#F5F5F5</color>
+    <color name="showBgColor">#F1F1F5</color>
+
+
+    <color name="card_background_light">#FFFFFF</color> <!-- Light mode background color -->
+    <color name="card_background_dark">#FFFFFF</color>
+    <color name="showFontColor">#FC5A5A</color> <!-- Dark mode background color -->
+
 </resources>
 

@@ -107,6 +107,7 @@ public class ResultRedActivity extends AppCompatActivity {
             }
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadProductListFromPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);

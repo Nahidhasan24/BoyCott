@@ -46,6 +46,7 @@ public class BoycottActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityBoycottBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         loadProductListFromPreferences();
         brandList = loadBrandListFromPreferences();
 

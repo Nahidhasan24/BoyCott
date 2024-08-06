@@ -78,6 +78,7 @@ public class ListFragment extends Fragment {
     Button boycott, mylist;
     TextView sortTextView;
     ImageView close;
+
     private LocationAdapter locationAdapter;
     private BrandAdapter brandAdapter;
     private CategoryAdapter categoryAdapter;
@@ -122,25 +123,22 @@ public class ListFragment extends Fragment {
         binding.productArrayList.setAdapter(producrsAdapter);
 
         sortTextView = binding.sortTextView;
-
         setupSpinners();
-
         if (mainActivity != null) {
             productList = mainActivity.getProductList();
             updateProductList(productList);
         }
-
         setupSearchAutoComplete();
-        binding.filterBtn.setOnClickListener(v -> {
-            clearSelections();
-            showDialog();
-        });
-        binding.boycottListBtn.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), BoycottActivity.class));
-        });
-        binding.mylistBtn.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), MyListActivity.class));
-        });
+//        binding.filterBtn.setOnClickListener(v -> {
+//            clearSelections();
+//            showDialog();
+//        });
+//        binding.boycottListBtn.setOnClickListener(v -> {
+//            startActivity(new Intent(getActivity(), BoycottActivity.class));
+//        });
+//        binding.mylistBtn.setOnClickListener(v -> {
+//            startActivity(new Intent(getActivity(), MyListActivity.class));
+//        });
     }
 
     private void clearSelections() {
@@ -337,7 +335,7 @@ public class ListFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupSpinners() {
-        binding.textViewSpinnerLocation.setOnClickListener(v -> showSearchableSpinnerDialog(
+        binding.locationBtn.setOnClickListener(v -> showSearchableSpinnerDialog(
                 countryNames.stream().map(Country::getCountryName).collect(Collectors.toList()),
                 item -> {
                     if (item.equals("Remove selection")) {
@@ -352,7 +350,7 @@ public class ListFragment extends Fragment {
                 }
         ));
 
-        binding.textViewSpinnerBrand.setOnClickListener(v -> showSearchableSpinnerDialog(
+        binding.brandBtn.setOnClickListener(v -> showSearchableSpinnerDialog(
                 brandList.stream().map(BrandModel::getCompanyName).collect(Collectors.toList()),
                 item -> {
                     if (item.equals("Remove selection")) {
@@ -367,7 +365,7 @@ public class ListFragment extends Fragment {
                 }
         ));
 
-        binding.textViewSpinnerCategory.setOnClickListener(v -> showSearchableSpinnerDialog(
+        binding.categoryBtn.setOnClickListener(v -> showSearchableSpinnerDialog(
                 categoryLis.stream().map(Category::getName).collect(Collectors.toList()),
                 item -> {
                     if (item.equals("Remove selection")) {
@@ -384,7 +382,7 @@ public class ListFragment extends Fragment {
     }
 
     private void showSearchableSpinnerDialog(List<String> items, OnItemSelectedListener listener) {
-        Dialog dialog = new Dialog(getActivity());
+        Dialog dialog = new Dialog(getActivity(), R.style.CustomDialogTheme);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_searchable_spinner);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -397,7 +395,7 @@ public class ListFragment extends Fragment {
         itemsWithRemoveOption.add("Remove selection");
         itemsWithRemoveOption.addAll(items);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, itemsWithRemoveOption);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.custom_list_item, itemsWithRemoveOption);
         listView.setAdapter(adapter);
 
         searchAutoCompleteTextView.addTextChangedListener(new TextWatcher() {
@@ -421,6 +419,7 @@ public class ListFragment extends Fragment {
 
         dialog.show();
     }
+
 
     interface OnItemSelectedListener {
         void onItemSelected(String item);
@@ -503,41 +502,41 @@ public class ListFragment extends Fragment {
     }
 
     private void setupSearchAutoComplete() {
-        List<String> productTitles = new ArrayList<>();
-        for (Product product : searchList) {
-            productTitles.add(product.getTitle());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_dropdown_item_custom, productTitles);
-        binding.searchET.setAdapter(adapter);
-        binding.searchET.setThreshold(1);
-
-        binding.searchET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filter(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-
-        binding.searchET.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedItem = (String) parent.getItemAtPosition(position);
-            filter(selectedItem);
-        });
-
-        binding.searchET.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= (binding.searchET.getRight() - binding.searchET.getCompoundDrawables()[2].getBounds().width())) {
-                    binding.searchET.setText("");
-                    return true;
-                }
-            }
-            return false;
-        });
+//        List<String> productTitles = new ArrayList<>();
+//        for (Product product : searchList) {
+//            productTitles.add(product.getTitle());
+//        }
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_dropdown_item_custom, productTitles);
+//        binding.searchET.setAdapter(adapter);
+//        binding.searchET.setThreshold(1);
+//
+//        binding.searchET.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                filter(s.toString());
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {}
+//        });
+//
+//        binding.searchET.setOnItemClickListener((parent, view, position, id) -> {
+//            String selectedItem = (String) parent.getItemAtPosition(position);
+//            filter(selectedItem);
+//        });
+//
+//        binding.searchET.setOnTouchListener((v, event) -> {
+//            if (event.getAction() == MotionEvent.ACTION_UP) {
+//                if (event.getRawX() >= (binding.searchET.getRight() - binding.searchET.getCompoundDrawables()[2].getBounds().width())) {
+//                    binding.searchET.setText("");
+//                    return true;
+//                }
+//            }
+//            return false;
+//        });
     }
 
     private void filter(String text) {
@@ -565,7 +564,7 @@ public class ListFragment extends Fragment {
                 productTitles.add(product.getTitle());
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_dropdown_item_custom, productTitles);
-            binding.searchET.setAdapter(adapter);
+            //binding.searchET.setAdapter(adapter);
         }
     }
 

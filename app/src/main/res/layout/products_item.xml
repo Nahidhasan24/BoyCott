@@ -4,60 +4,73 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
-    >
+    android:gravity="center"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card"
-        android:layout_margin="5dp"
-        android:backgroundTint="@android:color/white"
-        android:background="@drawable/red_bg"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:orientation="horizontal"
-        app:cardCornerRadius="20dp"
-        android:elevation="5dp">
+        app:cardBackgroundColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="10dp"
+        app:cardElevation="10dp">
 
         <LinearLayout
-            android:id="@+id/colorBg"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="horizontal"
-            android:elevation="4dp">
-
+            android:background="@android:color/white"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:id="@+id/colorBg"
+                android:background="@drawable/red_bg"
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/productImage"
+                <LinearLayout
+
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/baseline_account_circle_24"
-                    />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/productImage"
+                        android:layout_width="74dp"
+                        android:layout_height="74dp"
+                        android:src="@drawable/baseline_account_circle_24" />
+
+                </LinearLayout>
 
             </LinearLayout>
-
         </LinearLayout>
 
+
+
     </androidx.cardview.widget.CardView>
-
-
-
 
     <TextView
         android:layout_below="@id/card"
         android:layout_centerHorizontal="true"
         android:id="@+id/productTitle"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
+        android:layout_width="74dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_height="21dp"
         android:layout_gravity="center"
+        android:fontFamily="@font/air"
         android:gravity="center"
         android:text="Nike"
-        android:textColor="@color/secondColor"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:textColor="#0F2851"
         android:textSize="16sp" />
 
 </RelativeLayout>

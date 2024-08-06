@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:hint="Search Locations"
             android:textColor="@android:color/black"
+            android:textColorHint="@android:color/black"
             android:padding="15dp"
             android:layout_marginTop="8dp"/>
 
@@ -70,6 +71,7 @@
             android:layout_height="wrap_content"
             android:hint="Search Brands"
             android:textColor="@android:color/black"
+            android:textColorHint="@android:color/black"
             android:padding="15dp"
             android:layout_marginTop="8dp"/>
 
@@ -105,6 +107,7 @@
             android:layout_height="wrap_content"
             android:hint="Search Categories"
             android:textColor="@android:color/black"
+            android:textColorHint="@android:color/black"
             android:padding="15dp"
             android:layout_marginTop="8dp"/>
 

@@ -4,169 +4,142 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".Fragments.ListFragment">
+    android:background="@color/bg">
 
     <LinearLayout
         android:id="@+id/top_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
+        android:paddingBottom="10dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/top_background"
         android:orientation="vertical">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal"
-            android:padding="20dp"
-            android:weightSum="10">
+            android:weightSum="3">
 
-            <AutoCompleteTextView
-                android:id="@+id/searchET"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="7"
-                android:background="@drawable/search_bg"
-                android:drawableStart="@drawable/baseline_search_24"
-                android:drawableEnd="@drawable/baseline_close_24"
-                android:drawablePadding="10dp"
-                android:hint="Search..."
-                android:paddingLeft="15dp"
-                android:paddingRight="10dp"
-                android:textColor="@color/black"
-                android:textSize="11sp" />
+            <RelativeLayout
 
-            <LinearLayout
-                android:id="@+id/filterBtn"
+                android:id="@+id/brandBtn"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="30dp"
+                android:layout_margin="2dp"
                 android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:layout_weight="3"
-                android:background="@drawable/search_bg"
-                android:gravity="center|start"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/baseline_filter_alt_24" />
+                android:gravity="center"
+                android:background="@drawable/spinner_bg"
+                android:layout_weight="1">
 
                 <TextView
+                    android:id="@+id/textViewSpinnerBrand"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:text="Brand"
+                    />
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center|start"
-                    android:text="Filter"
-                    android:textColor="@color/black"
-                    android:textSize="15sp" />
-            </LinearLayout>
+                    android:src="@drawable/baseline_keyboard_arrow_down_24"
+                    android:layout_toRightOf="@+id/textViewSpinnerBrand"
+                    android:layout_centerVertical="true"
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/categoryBtn"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_margin="2dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+
+                android:background="@drawable/spinner_bg"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/textViewSpinnerCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:text="Category"
+                    android:layout_centerInParent="true"
+                     />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_keyboard_arrow_down_24"
+                    android:layout_toRightOf="@+id/textViewSpinnerCategory"
+                    android:layout_centerVertical="true"
+                    />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/locationBtn"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_margin="2dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:background="@drawable/spinner_bg"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:id="@+id/textViewSpinnerLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:text="Location" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_keyboard_arrow_down_24"
+                    android:layout_toRightOf="@+id/textViewSpinnerLocation"
+                    android:layout_centerVertical="true"
+                    />
+            </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:background="@drawable/round_bg_section"
-            android:weightSum="12">
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="50dp"
-                android:text="All Products"
-                android:textColor="@color/black"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:backgroundTint="@android:color/white" />
 
-            <Button
-                android:id="@+id/boycottListBtn"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="50dp"
-                android:layout_marginStart="5dp"
-                android:text="Boycott List"
-                android:textColor="@color/black"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:backgroundTint="@android:color/white" />
 
-            <Button
-                android:id="@+id/mylistBtn"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="50dp"
-                android:layout_marginStart="5dp"
-                android:text="My List"
-                android:textColor="@color/black"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:backgroundTint="@android:color/white" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
-            android:orientation="horizontal"
-            android:weightSum="9">
-
-            <TextView
-                android:id="@+id/textViewSpinnerBrand"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-                android:layout_weight="3"
-                android:background="@drawable/spinner_bg"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:text="Brand" />
-
-            <TextView
-                android:id="@+id/textViewSpinnerCategory"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-                android:layout_weight="3"
-                android:textColor="@color/white"
-                android:background="@drawable/spinner_bg"
-                android:gravity="center"
-                android:text="Category" />
-
-            <TextView
-                android:id="@+id/textViewSpinnerLocation"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-                android:layout_weight="3"
-                android:textColor="@color/white"
-                android:background="@drawable/spinner_bg"
-                android:gravity="center"
-                android:text="Location" />
-        </LinearLayout>
     </LinearLayout>
 
     <TextView
+        android:background="@color/showBgColor"
         android:id="@+id/productCountTv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_below="@id/top_section"
-        android:layout_margin="10dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
+        android:fontFamily="@font/ari_w_md"
         android:text="Shows 1023 Products"
-        android:textColor="@color/red"
-        android:textSize="16sp" />
+        android:textColor="@color/showFontColor"
+        android:textSize="14sp" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/sortTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
