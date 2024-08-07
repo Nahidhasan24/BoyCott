@@ -18,6 +18,7 @@
 
 
         <LinearLayout
+            android:id="@+id/spinnerSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -27,7 +28,6 @@
             android:weightSum="3">
 
             <RelativeLayout
-
                 android:id="@+id/brandBtn"
                 android:layout_width="0dp"
                 android:layout_height="30dp"

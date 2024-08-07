@@ -25,6 +25,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <LinearLayout
+
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:id="@+id/colorBg"
@@ -34,7 +35,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-
+                    android:layout_margin="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
