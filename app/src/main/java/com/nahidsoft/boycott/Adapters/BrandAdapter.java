@@ -11,17 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nahidsoft.boycott.Models.BrandModel;
 import com.nahidsoft.boycott.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BrandAdapter extends RecyclerView.Adapter<BrandAdapter.ViewHolder> {
     private List<BrandModel> brandList;
-    private List<BrandModel> filteredList;
     private final OnBrandClickListener listener;
 
     public BrandAdapter(List<BrandModel> brandList, OnBrandClickListener listener) {
         this.brandList = brandList;
-        this.filteredList = new ArrayList<>(brandList);
         this.listener = listener;
     }
 
@@ -34,27 +31,13 @@ public class BrandAdapter extends RecyclerView.Adapter<BrandAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        BrandModel brand = filteredList.get(position);
+        BrandModel brand = brandList.get(position);
         holder.textViewBrand.setText(brand.getCompanyName());
     }
 
     @Override
     public int getItemCount() {
-        return filteredList.size();
-    }
-
-    public void filter(String text) {
-        filteredList.clear();
-        if (text.isEmpty()) {
-            filteredList.addAll(brandList);
-        } else {
-            for (BrandModel item : brandList) {
-                if (item.getCompanyName().toLowerCase().contains(text.toLowerCase())) {
-                    filteredList.add(item);
-                }
-            }
-        }
-        notifyDataSetChanged();
+        return brandList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -70,7 +53,7 @@ public class BrandAdapter extends RecyclerView.Adapter<BrandAdapter.ViewHolder> 
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                listener.onBrandClick(filteredList.get(position));
+                listener.onBrandClick(brandList.get(position));
             }
         }
     }

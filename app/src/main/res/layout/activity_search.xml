@@ -41,25 +41,25 @@
             <AutoCompleteTextView
                 android:id="@+id/searchET"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
+                android:layout_height="40dp"
                 android:layout_weight="6.5"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:background="@drawable/search_bg"
                 android:drawableStart="@drawable/baseline_search_24"
-                android:drawableEnd="@drawable/baseline_close_24"
                 android:drawablePadding="10dp"
                 android:hint="Search..."
+                android:fontFamily="@font/air"
                 android:paddingLeft="15dp"
                 android:paddingRight="10dp"
                 android:textColorHint="@color/black"
                 android:textColor="@color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <LinearLayout
                 android:id="@+id/filterBtn"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
                 android:layout_weight="3"
@@ -80,29 +80,31 @@
                     android:layout_gravity="center"
                     android:gravity="center|start"
                     android:text="Filter"
+                    android:fontFamily="@font/air"
                     android:textColor="@color/black"
-                    android:textSize="15sp" />
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/spinnerSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal"
-            android:weightSum="12">
+            android:weightSum="3">
 
             <RelativeLayout
                 android:id="@+id/brandBtn"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="30dp"
                 android:layout_margin="2dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:background="@drawable/spinner_bg"
-                android:layout_weight="4">
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/textViewSpinnerBrand"
@@ -127,12 +129,13 @@
             <RelativeLayout
                 android:id="@+id/categoryBtn"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="30dp"
                 android:layout_margin="2dp"
                 android:layout_gravity="center"
                 android:gravity="center"
+
                 android:background="@drawable/spinner_bg"
-                android:layout_weight="4">
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/textViewSpinnerCategory"
@@ -158,12 +161,12 @@
             <RelativeLayout
                 android:id="@+id/locationBtn"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="30dp"
                 android:layout_margin="2dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:background="@drawable/spinner_bg"
-                android:layout_weight="4">
+                android:layout_weight="1">
 
                 <TextView
                     android:layout_centerInParent="true"
@@ -188,23 +191,26 @@
 
 
     </LinearLayout>
-
     <TextView
+        android:background="@color/showBgColor"
         android:id="@+id/productCountTv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_below="@id/top_section"
-        android:layout_margin="10dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
+        android:fontFamily="@font/ari_w_md"
         android:text="Shows 1023 Products"
-        android:textColor="@color/red"
-        android:textSize="16sp" />
+        android:textColor="@color/showFontColor"
+        android:textSize="14sp" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/sortTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/productCountTv"
+        android:layout_margin="10dp"
         android:gravity="center"
         android:text=""
         android:textColor="@color/red"
@@ -216,7 +222,8 @@
         android:id="@+id/productArrayList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/sortTextView">
+        android:layout_below="@id/sortTextView"
+        android:layout_marginTop="10dp">
     </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
@@ -227,4 +234,5 @@
         android:text="Empty List"
         android:textSize="20sp"
         android:visibility="gone" />
+
 </RelativeLayout>
