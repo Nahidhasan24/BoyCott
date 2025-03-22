@@ -29,4 +29,4 @@ Here are a few screenshots showcasing the app:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/boycott.git
+   git clone https://github.com/Nahidhasan24/BoyCott.git
