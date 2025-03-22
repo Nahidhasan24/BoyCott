@@ -17,11 +17,11 @@
 
 Here are a few screenshots showcasing the app:
 
-![Screenshot 1](screen-shots/screenshot1.png)
-![Screenshot 2](screen-shots/screenshot2.png)
-![Screenshot 3](screen-shots/screenshot3.png)
-![Screenshot 4](screen-shots/screenshot4.png)
-![Screenshot 5](screen-shots/screenshot5.png)
+<img src="screen-shots/1.png" alt="Screenshot 1" width="300">
+<img src="screen-shots/2.png" alt="Screenshot 2" width="300">
+<img src="screen-shots/3.png" alt="Screenshot 3" width="300">
+<img src="screen-shots/4.png" alt="Screenshot 4" width="300">
+<img src="screen-shots/5.png" alt="Screenshot 5" width="300">
 
 ---
 
